@@ -26,7 +26,7 @@ export default class CartPage extends React.Component<IProps> {
         return (
             <View>
                 <TopHeader title={'购物车'} />
-                <BottomBar />
+                {/* <BottomBar /> */}
             </View>
         )
     }

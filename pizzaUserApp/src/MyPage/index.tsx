@@ -1,6 +1,6 @@
 /**
  * created by wjy on 2019/2/21
- * description: app入口
+ * description: 我的信息
  */
 
 import * as React from 'react';
@@ -30,10 +30,9 @@ export default class MenuPage extends React.Component<IProps> {
     }
 
     public render() {
-        console.log('render RootPage')
         return (
-            <View style={styles.container}>
-                <TopHeader title={'首页'} />
+            <View>
+                <TopHeader title={'我的'} />
                 {/* <BottomBar navigateTo={this.navigateToPage} /> */}
             </View>
         )
@@ -41,8 +40,5 @@ export default class MenuPage extends React.Component<IProps> {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#eee'
-    }
+
 });

@@ -8,38 +8,67 @@ import {
     Platform,
     StyleSheet,
     Text,
-    View
+    View,
+    TouchableOpacity
 } from 'react-native';
-import { ButtonGroup } from 'react-native-elements'
 
 interface IProps {
+    navigateTo: any;
 }
 
 export default class TopHeader extends React.Component<IProps> {
 
-    public render() {
-        // const menuBtn = () => <Text>Hello</Text>
-        // const cartBtn = () => <Text>World</Text>
-        // const orderBtn = () => <Text>ButtonGroup</Text>
+    private navigatePage(pageName) {
+        this.props.navigateTo(pageName)
+    }
 
-        // const buttons = [{ element: component1 }, { element: component2 }, { element: component3 }]
+    public render() {
 
         return (
-            <View style={styles.barWrap}>
-                {/* <ButtonGroup
-                    buttons={buttons}
-                    containerStyle={{ height: 50 }}
-                /> */}
-
+            <View style={styles.bottomBar}>
+                <TouchableOpacity
+                    style={styles.barBtn}
+                    onPress={() => { this.navigatePage('Home') }}
+                >
+                    <Text style={styles.barTxt}>菜单</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.barBtn}
+                    onPress={() => { this.navigatePage('Cart') }}
+                >
+                    <Text style={styles.barTxt}>购物车</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.barBtn}
+                    onPress={() => { this.navigatePage('Order') }}
+                >
+                    <Text style={styles.barTxt}>订单</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.barBtn}
+                    onPress={() => { this.navigatePage('MyInfo') }}
+                >
+                    <Text style={styles.barTxt}>我的</Text>
+                </TouchableOpacity>
             </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    barWrap: {
-        // height: 30
+    bottomBar: {
+        flexDirection: 'row',
+        height: 60,
+        justifyContent: 'space-between',
+        backgroundColor: '#ccc',
         // position: 'absolute',
         // bottom: 0
+    },
+    barBtn: {
+        width: '20%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff'
+    },
+    barTxt: {
+        fontSize: 20,
+        color: '#333',
     }
 });
