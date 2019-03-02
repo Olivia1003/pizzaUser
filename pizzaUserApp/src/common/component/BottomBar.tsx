@@ -16,19 +16,20 @@ interface IProps {
 }
 
 export default class TopHeader extends React.Component<IProps> {
-    render() {
-        const component1 = () => <Text>Hello</Text>
-        const component2 = () => <Text>World</Text>
-        const component3 = () => <Text>ButtonGroup</Text>
 
-        const buttons = [{ element: component1 }, { element: component2 }, { element: component3 }]
+    public render() {
+        // const menuBtn = () => <Text>Hello</Text>
+        // const cartBtn = () => <Text>World</Text>
+        // const orderBtn = () => <Text>ButtonGroup</Text>
+
+        // const buttons = [{ element: component1 }, { element: component2 }, { element: component3 }]
 
         return (
             <View style={styles.barWrap}>
-                <ButtonGroup
+                {/* <ButtonGroup
                     buttons={buttons}
                     containerStyle={{ height: 50 }}
-                />
+                /> */}
 
             </View>
         )
@@ -38,5 +39,7 @@ export default class TopHeader extends React.Component<IProps> {
 const styles = StyleSheet.create({
     barWrap: {
         // height: 30
+        // position: 'absolute',
+        // bottom: 0
     }
 });

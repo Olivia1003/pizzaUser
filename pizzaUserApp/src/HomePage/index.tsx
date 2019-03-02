@@ -10,17 +10,23 @@ import {
     Text,
     View
 } from 'react-native';
-import HomePage from './HomePage/index'
+import TopHeader from '../common/component/TopHeader'
+import BottomBar from '../common/component/BottomBar'
 
 interface IProps {
-    data: any;
+    // data: any;
 }
-export default class RootPage extends React.Component<IProps> {
+export default class MenuPage extends React.Component<IProps> {
+    constructor(props) {
+        super(props)
+        this.state = {}
+    }
     render() {
         console.log('render RootPage')
         return (
             <View>
-                <HomePage />
+                <TopHeader title={'首页'} />
+                <BottomBar />
             </View>
         )
     }

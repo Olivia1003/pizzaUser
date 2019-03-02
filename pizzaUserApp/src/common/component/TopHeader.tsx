@@ -3,27 +3,29 @@
  * description: 顶部header
  */
 
-import * as React from 'react';
+import * as React from 'react'
 import {
     Platform,
     StyleSheet,
     Text,
     View
-} from 'react-native';
+} from 'react-native'
 import { Header } from 'react-native-elements'
 
 
 interface IProps {
+    title: string;
 }
 
 export default class TopHeader extends React.Component<IProps> {
     render() {
-        console.log('render RootPage')
+        console.log('render TopHeader')
+        const { title } = this.props
         return (
             <View style={styles.headerWrap}>
                 <Header
                     leftComponent={{ icon: 'menu', color: '#fff' }}
-                    centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
+                    centerComponent={{ text: title, style: { color: '#fff' } }}
                     rightComponent={{ icon: 'home', color: '#fff' }}
                 />
 
