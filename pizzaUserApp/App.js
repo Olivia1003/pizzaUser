@@ -14,14 +14,8 @@ import CartPage from './dest/CartPage/index'
 import OrderPage from './dest/OrderPage/index'
 import MyPage from './dest/MyPage/index'
 
-// const AppNavigator = createStackNavigator(
-//   {
-//     Home: { screen: HomePage },
-//     Cart: { screen: CartPage }
-//   }, {
-//     initialRouteName: 'Home',
-//   }
-// )
+
+// export default createAppContainer(AppNavigator)
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -86,7 +80,6 @@ const TabNavigator = createBottomTabNavigator(
 
 
 const RootStack = createAppContainer(TabNavigator)
-// export default createAppContainer(TabNavigator)
 
 export default class App extends React.Component {
   render() {

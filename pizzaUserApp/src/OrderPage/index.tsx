@@ -5,33 +5,158 @@
 
 import * as React from 'react';
 import {
-    Platform,
+    ScrollView,
     StyleSheet,
-    Text,
-    View
+    View,
+    Text
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
 import BottomBar from '../common/component/BottomBar'
+import {orderMock} from '../common/mock/orderMock'
+import { Button } from 'react-native-elements';
+
+const MOCK=true;
 
 interface IProps {
     // data: any;
 }
-export default class OrderPage extends React.Component<IProps> {
+interface IState{
+    orderList: any
+}
+
+export default class OrderPage extends React.Component<IProps,IState> {
     constructor(props) {
-        super(props)
-        this.state = {}
+        super(props);
+        this.state = {
+            orderList:MOCK?orderMock.orderList:[]
+        }
     }
+
     render() {
-        console.log('render OrderPage')
         return (
-            <View>
+            <View style={styles.orderPage}>
                 <TopHeader title={'我的订单'} />
-                <BottomBar />
+                    <ScrollView>
+                        {this.renderOrderList()}
+                    </ScrollView>
             </View>
         )
     }
+
+    renderOrderList() {
+        const {orderList} = this.state;
+        console.log('OrderPage render',orderList);
+        return orderList.map(order =>{
+            return (
+                <View style={styles.orderCard} key={order.id}>
+                    <View style={styles.head}>
+                        <Text>{order.shopName} > </Text>
+                    </View>
+                    {this.renderItemList(order.items)}
+                    <View style={styles.bottom}>
+                        <Text style={styles.itemTotalPriceText}>¥{order.totalPrice}</Text>
+                        {this.renderButton(order)}
+                    </View>
+                </View>
+            )
+        })
+    }
+    renderItemList(items) {
+        return items.map(item =>{
+            return (
+                <View style={styles.itemCard}>
+                    <View style={styles.itemName}><Text style={styles.itemNameText}>{item.itemName}</Text></View>
+                    <View style={styles.itemCount}><Text style={styles.itemCountText}>✖️{item.count}</Text></View>
+                    <View style={styles.itemPrice}><Text style={styles.itemPriceText}>¥{item.price}</Text></View>
+                </View>
+            )
+        })
+    }
+    renderButton(order){
+        //判断按钮状态
+        if(order.state == 'canceled'){
+            return (
+                <Button  title="已取消"
+                         disabled={true}
+                         disabledStyle={styles.btnBase}
+                         disabledTitleStyle={styles.btnTitleBase}
+                         raised={true}></Button>
+            )
+        }else{
+            return (
+                <Button  title="查看详情"
+                         buttonStyle={[styles.btnBase]}
+                         titleStyle={[styles.btnTitleBase]}
+                         raised={true}></Button>
+            )
+        }
+
+    }
+
 }
 
 const styles = StyleSheet.create({
+    orderCard:{
+        flexDirection: 'column',
+        margin: 10,
+        backgroundColor: '#FFFFFF',
+        padding: 10,
+        shadowOffset: {
+            width: 3,
+            height: 3
+        },
+        shadowOpacity: 0.1,
+        borderRadius: 5
+    },
+    itemCard:{
+        flexDirection: 'row',
+        marginTop: 10
+    },
+    head:{
+        flexDirection: 'row',
+        marginBottom: 10
+    },
+    bottom:{
+        flexDirection: 'row',
+        marginTop: 15,
+        justifyContent: 'space-between'
+    },
+    itemName:{
+        width: '40%'
+    },
+    itemCount:{
+        width: '30%'
+    },
+    itemPrice:{
+        width: '30%'
+    },
+    itemNameText:{
+        fontSize: 20
+    },
+    itemCountText:{
+        fontSize: 20
+    },
+    itemPriceText:{
+        fontSize: 20,
+        color: '#FF7F50'
+    },
+    itemTotalPriceText:{
+        fontSize: 20,
+        color: '#FF7F50'
+    },
+    orderPage:{
+        backgroundColor: '#F5F5F5',
+        flex: 1
+    },
 
+    btnBase:{
+        height: 25,
+        padding: 3
+    },
+    btnTitleBase:{
+        fontSize: 14
+    },
+    btn:{
+        color: '#1C7ED7'
+    },
 });
