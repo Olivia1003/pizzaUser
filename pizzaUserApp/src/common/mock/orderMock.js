@@ -3,51 +3,79 @@ const orderMock = {
         {
             orderId: '111',
             state: 'canceled',
-            shopId: '222',
-            shopName: '我爱pizza（金沙江路店）',
+            shop:{
+                shopId: '222',
+                shopName: '我爱pizza（金沙江路店）',
+            },
             items: [
                 {
-                    itemId: '1',
-                    itemName: '吮指原味鸡',
-                    count: '3',
-                    price: '12',
+                    item:{
+                        itemId: '1',
+                        itemName: '吮指原味鸡',
+                        price: '12',
+                        picUrl: '',
+                        size: '13',
+                        description: '',
+                        state: '',
+                    },
+                    count: 3,
                 },
                 {
-                    itemId: '2',
-                    itemName: '香辣鸡翅',
-                    count: '4',
-                    price: '82',
+                    item:{
+                        itemId: '1',
+                        itemName: '吮指原味鸡',
+                        price: '12',
+                        picUrl: '',
+                        size: '13',
+                        description: '',
+                        state: '',
+                    },
+                    count: 3,
                 }
             ],
-            totalPrice: 106,
-            startDate: '2018-3-1'
+            price: 106,
+            startTime: '2018-3-1',
+            EndTime: '2018-3-2',
         },
         {
             orderId: '112',
             state: 'pending',
-            shopId: '222',
-            shopName: '我爱pizza（真杯路店）',
+            shop:{
+                shopId: '222',
+                shopName: '我爱pizza（真北路店）',
+            },
             items: [
                 {
-                    itemId: '1',
-                    itemName: '吮指原味鸡',
-                    count: '3',
-                    price: '12',
+                    item:{
+                        itemId: '1',
+                        itemName: '吮指原味鸡',
+                        price: '12',
+                        picUrl: '',
+                        size: '13',
+                        description: '',
+                        state: '',
+                    },
+                    count: 3,
+                },
+                {
+                    item:{
+                        itemId: '1',
+                        itemName: '吮指原味鸡',
+                        price: '12',
+                        picUrl: '',
+                        size: '13',
+                        description: '',
+                        state: '',
+                    },
+                    count: 3,
                 }
             ],
-            totalPrice: 106,
-            startDate: '2018-3-1'
+            price: 106,
+            startTime: '2018-3-1',
+            EndTime: '2018-3-2',
         }
     ]
 };
-
-// interface IOrderItem{
-//     orderId:string;
-// }
-//
-// interface IOrderResponseData{
-//     orderList:IOrderItem[]
-// }
 
 module.exports={
     orderMock,

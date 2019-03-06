@@ -11,9 +11,8 @@ import {
     Text
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
-import BottomBar from '../common/component/BottomBar'
 import {orderMock} from '../common/mock/orderMock'
-import { Button } from 'react-native-elements';
+import { Button } from 'react-native-elements'
 
 const MOCK=true;
 
@@ -29,7 +28,7 @@ export default class OrderPage extends React.Component<IProps,IState> {
         super(props);
         this.state = {
             orderList:MOCK?orderMock.orderList:[]
-        }
+        };
     }
 
     render() {
@@ -50,11 +49,11 @@ export default class OrderPage extends React.Component<IProps,IState> {
             return (
                 <View style={styles.orderCard} key={order.id}>
                     <View style={styles.head}>
-                        <Text>{order.shopName} > </Text>
+                        <Text>{order.shop.shopName} > </Text>
                     </View>
                     {this.renderItemList(order.items)}
                     <View style={styles.bottom}>
-                        <Text style={styles.itemTotalPriceText}>¥{order.totalPrice}</Text>
+                        <Text style={styles.itemTotalPriceText}>¥{order.price}</Text>
                         {this.renderButton(order)}
                     </View>
                 </View>
@@ -62,11 +61,13 @@ export default class OrderPage extends React.Component<IProps,IState> {
         })
     }
     renderItemList(items) {
-        return items.map(item =>{
+        return items.map(itemObj =>{
+            var item = itemObj.item;
+            var count = itemObj.count;
             return (
                 <View style={styles.itemCard}>
                     <View style={styles.itemName}><Text style={styles.itemNameText}>{item.itemName}</Text></View>
-                    <View style={styles.itemCount}><Text style={styles.itemCountText}>✖️{item.count}</Text></View>
+                    <View style={styles.itemCount}><Text style={styles.itemCountText}>✖️{count}</Text></View>
                     <View style={styles.itemPrice}><Text style={styles.itemPriceText}>¥{item.price}</Text></View>
                 </View>
             )
