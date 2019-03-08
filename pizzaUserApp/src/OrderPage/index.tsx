@@ -8,11 +8,11 @@ import {
     ScrollView,
     StyleSheet,
     View,
-    Text
+    Text, TouchableOpacity
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
 import {orderMock} from '../common/mock/orderMock'
-import { Button } from 'react-native-elements'
+import {Button, Icon} from 'react-native-elements'
 
 const MOCK=true;
 
@@ -31,6 +31,19 @@ export default class OrderPage extends React.Component<IProps,IState> {
         };
     }
 
+    private deleteOrder(orderId){
+        console.log('delete ', orderId);
+        /*let list = JSON.parse(JSON.stringify(this.state.orderList));
+        this.setState({
+            orderList:[]
+        },()=>{
+
+        })*/
+    }
+    private checkOrder(orderId){
+        console.log('check ', orderId);
+    }
+
     render() {
         return (
             <View style={styles.orderPage}>
@@ -44,12 +57,23 @@ export default class OrderPage extends React.Component<IProps,IState> {
 
     renderOrderList() {
         const {orderList} = this.state;
-        console.log('OrderPage render',orderList);
         return orderList.map(order =>{
+            const pressCallback=()=>{
+                this.deleteOrder(order.orderId)
+            };
             return (
-                <View style={styles.orderCard} key={order.id}>
+                <View style={styles.orderCard} key={order.orderId}>
                     <View style={styles.head}>
                         <Text>{order.shop.shopName} > </Text>
+                        <TouchableOpacity
+                            onPress={pressCallback}
+                            activeOpacity={0.7}
+                        >
+                            <Icon
+                                size={18}
+                                name='close'
+                            />
+                        </TouchableOpacity>
                     </View>
                     {this.renderItemList(order.items)}
                     <View style={styles.bottom}>
@@ -73,6 +97,7 @@ export default class OrderPage extends React.Component<IProps,IState> {
             )
         })
     }
+
     renderButton(order){
         //判断按钮状态
         if(order.state == 'canceled'){
@@ -84,8 +109,12 @@ export default class OrderPage extends React.Component<IProps,IState> {
                          raised={true}></Button>
             )
         }else{
+            const pressCallback=()=>{
+                this.checkOrder(order.orderId)
+            };
             return (
-                <Button  title="查看详情"
+                <Button  onPress={pressCallback}
+                         title="查看详情"
                          buttonStyle={[styles.btnBase]}
                          titleStyle={[styles.btnTitleBase]}
                          raised={true}></Button>
@@ -115,6 +144,7 @@ const styles = StyleSheet.create({
     },
     head:{
         flexDirection: 'row',
+        justifyContent: 'space-between',
         marginBottom: 10
     },
     bottom:{

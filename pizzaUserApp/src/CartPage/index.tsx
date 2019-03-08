@@ -7,31 +7,33 @@ import * as React from 'react';
 import {
     Platform,
     StyleSheet,
-    Text,
+    Text, TouchableOpacity,
     View
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
-import BottomBar from '../common/component/BottomBar'
+import {cartMock} from "../common/mock/cartMock";
+import {Button, Icon} from "react-native-elements";
 
+const MOCK=true;
 interface IProps {
     // data: any;
 }
 export default class CartPage extends React.Component<IProps> {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            cartList: MOCK ? cartMock.carts : []
+        };
     }
+
     render() {
         console.log('render CartPage')
         return (
             <View>
-                <TopHeader title={'购物车'} />
+                <TopHeader title={'购物车'}/>
                 {/* <BottomBar /> */}
             </View>
         )
     }
+    
 }
-
-const styles = StyleSheet.create({
-
-});
