@@ -1,6 +1,7 @@
 const menuMock = {
     menu:{
-        shop_id: '1',
+        menuId: '2',
+        shopId: '1',
         items:[
             {
                 item:{
@@ -17,7 +18,7 @@ const menuMock = {
             {
                 item:{
                     itemId: '2',
-                    itemName: '吮指原味鸡',
+                    itemName: '香辣鸡翅',
                     price: '12',
                     picUrl: '',
                     size: '13',

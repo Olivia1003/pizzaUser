@@ -35,7 +35,7 @@ const orderMock = {
             ],
             price: 106,
             startTime: '2018-3-1',
-            EndTime: '2018-3-2',
+            endTime: '2018-3-2',
         },
         {
             orderId: '112',
@@ -72,11 +72,11 @@ const orderMock = {
             ],
             price: 106,
             startTime: '2018-3-1',
-            EndTime: '2018-3-2',
+            endTime: '2018-3-2',
         }
     ]
 };
 
 module.exports={
     orderMock,
-}
+};
