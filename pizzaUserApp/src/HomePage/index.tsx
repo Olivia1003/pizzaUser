@@ -18,6 +18,10 @@ import MySearchBar from './components/MySearchBar'
 import MenuItem from './components/MenuItem'
 import ShopModal from './components/ShopModal'
 import CartModal from './components/CartModal'
+
+import { menuMock } from '../common/mock/menuMock'
+
+const MOCK = true
 interface IProps {
     // data: any;
     navigation: any;
@@ -27,6 +31,7 @@ interface IState {
     searchValue: string;
     isShowShopModal: boolean;
     isShowCartModal: boolean;
+    menuList: any;
 }
 export default class MenuPage extends React.Component<IProps, IState> {
     constructor(props) {
@@ -34,7 +39,8 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.state = {
             searchValue: '',
             isShowShopModal: false,
-            isShowCartModal: false
+            isShowCartModal: false,
+            menuList: MOCK ? menuMock.menu.items : []
         }
         this.navigateToPage = this.navigateToPage.bind(this)
         this.showShopModal = this.showShopModal.bind(this)
@@ -159,10 +165,21 @@ export default class MenuPage extends React.Component<IProps, IState> {
     }
 
     private renderMenuList() {
+        const { menuList } = this.state
+        // console.log('renderMenuList', menuList)
+
+        const menuListView = menuList.map((mItem, index) => {
+            return (
+                <MenuItem
+                    key={`menuItem-${index}`}
+                    itemData={mItem}
+                />
+            )
+        })
+
         return (
             <View style={styles.menuList}>
-                <MenuItem />
-                <MenuItem />
+                {menuListView}
             </View>
         )
     }

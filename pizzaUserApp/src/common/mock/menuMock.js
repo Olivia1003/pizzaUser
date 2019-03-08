@@ -1,28 +1,28 @@
 const menuMock = {
-    menu:{
+    menu: {
         menuId: '2',
         shopId: '1',
-        items:[
+        items: [
             {
-                item:{
+                item: {
                     itemId: '1',
                     itemName: '吮指原味鸡',
                     price: '12',
                     picUrl: '',
                     size: '13',
-                    description: '',
+                    description: 'detail',
                     state: '',
                 },
                 count: 3,
             },
             {
-                item:{
+                item: {
                     itemId: '2',
                     itemName: '香辣鸡翅',
                     price: '12',
                     picUrl: '',
                     size: '13',
-                    description: '',
+                    description: 'detail',
                     state: '',
                 },
                 count: 3,
@@ -31,6 +31,6 @@ const menuMock = {
     }
 };
 
-module.exports={
+module.exports = {
     menuMock,
 };

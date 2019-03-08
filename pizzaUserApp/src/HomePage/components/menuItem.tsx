@@ -12,6 +12,7 @@ import { Icon, Button } from 'react-native-elements';
 interface IProps {
     // data: any;
     // navigation: any;
+    itemData: any;
 }
 
 interface IState {
@@ -67,24 +68,42 @@ export default class MenuItem extends React.Component<IProps, IState> {
     }
 
     public render() {
-        console.log('render MenuItem')
+        const { itemData } = this.props
+        console.log('render MenuItem', itemData)
 
         const imgUrl = require('../../../images/pizza.png')
 
-        return (
-            <View style={styles.menuItemWrap}>
-                <Image
-                    style={styles.pizzaImg}
-                    source={imgUrl}
-                />
-                <View style={styles.rightPart}>
-                    <Text style={styles.nameTxt}>pizza Name</Text>
-                    <Text style={styles.detailTxt}>pizza detail</Text>
-                    {this.renderCountBar()}
-                </View>
 
-            </View>
-        )
+        if (itemData && itemData.item) {
+            const pName = itemData.item.itemName || ''
+            const pPrice = itemData.item.price || ''
+            // const pSize = itemData.item.price || ''
+            const pDetail = itemData.item.description || ''
+            const pCount = itemData.count || ''
+            const pPicUrl = itemData.item.picUrl || ''
+            return (
+                <View style={styles.menuItemWrap}>
+                    <Image
+                        style={styles.pizzaImg}
+                        source={imgUrl}
+                    />
+                    <View style={styles.rightPart}>
+                        <Text style={styles.nameTxt}>{pName}</Text>
+                        <Text style={styles.detailTxt}>{pDetail}</Text>
+                        <Text style={styles.countTxt}>库存：{pCount}</Text>
+                        <Text style={styles.priceTxt}>¥{pPrice}</Text>
+                        {this.renderCountBar()}
+                    </View>
+
+                </View>
+            )
+        } else {
+            return (
+                <View />
+            )
+        }
+
+
     }
 }
 
@@ -125,6 +144,14 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#aaa'
     },
+    countTxt: {
+        fontSize: 13,
+        color: '#333'
+    },
+    priceTxt: {
+        fontSize: 13,
+        color: '#333'
+    },
     // count
     countWrap: {
         flexDirection: 'row',
@@ -133,5 +160,6 @@ const styles = StyleSheet.create({
         bottom: 5,
         right: 10
     },
+
 
 });
