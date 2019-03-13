@@ -11,10 +11,13 @@ import {
     View
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
-import {cartMock} from "../common/mock/cartMock";
-import {Button, Icon} from "react-native-elements";
+import { cartMock } from "../common/mock/cartMock";
+import { Button, Icon } from "react-native-elements";
 
-const MOCK=true;
+// map
+import { WebView } from 'react-native-webview';
+
+const MOCK = true;
 interface IProps {
     // data: any;
 }
@@ -30,10 +33,21 @@ export default class CartPage extends React.Component<IProps> {
         console.log('render CartPage')
         return (
             <View>
-                <TopHeader title={'购物车'}/>
-                {/* <BottomBar /> */}
+                <TopHeader title={'购物车'} />
+                <Text>map</Text>
+                <View style={{
+                    width: '100%',
+                    height: 500,
+                    backgroundColor: '#ccc'
+                }}>
+                    <WebView
+                        source={{ uri: 'https://lbs.amap.com/api/javascript-api/example/riding-route/plan-route-according-to-lnglat' }}
+                        style={{ marginTop: 20 }}
+                    />
+                </View>
+
             </View>
         )
     }
-    
+
 }

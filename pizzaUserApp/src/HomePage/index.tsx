@@ -13,15 +13,21 @@ import {
 } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 
+// component
 import TopHeader from '../common/component/TopHeader'
 import MySearchBar from './components/MySearchBar'
 import MenuItem from './components/MenuItem'
 import ShopModal from './components/ShopModal'
 import CartModal from './components/CartModal'
 
+// mock
 import { menuMock } from '../common/mock/menuMock'
-
+import { cartMock } from '../common/mock/cartMock'
 const MOCK = true
+
+// service
+import { transferMenuData, transferCartData } from './service/menuTransfer'
+
 interface IProps {
     // data: any;
     navigation: any;
@@ -32,6 +38,7 @@ interface IState {
     isShowShopModal: boolean;
     isShowCartModal: boolean;
     menuList: any;
+    // cartList: any;
 }
 export default class MenuPage extends React.Component<IProps, IState> {
     constructor(props) {
@@ -39,8 +46,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.state = {
             searchValue: '',
             isShowShopModal: false,
-            isShowCartModal: false,
-            menuList: MOCK ? menuMock.menu.items : []
+            isShowCartModal: true,
+            menuList: MOCK ? transferMenuData(menuMock.menu.items) : [],
+            // cartList: MOCK ? transferCartData(cartMock) : [],
         }
         this.navigateToPage = this.navigateToPage.bind(this)
         this.showShopModal = this.showShopModal.bind(this)
@@ -48,11 +56,22 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.showCartModal = this.showCartModal.bind(this)
         this.hideCartModal = this.hideCartModal.bind(this)
 
+        this.addMenuItemCount = this.addMenuItemCount.bind(this)
+        this.deleteMenuItemCount = this.deleteMenuItemCount.bind(this)
+
     }
 
     private navigateToPage(pageName) {
         console.log('navigateToPage', pageName)
         this.props.navigation.navigate(pageName)
+    }
+
+    private addMenuItemCount() {
+        console.log('addMenuItemCount')
+    }
+
+    private deleteMenuItemCount() {
+        console.log('deleteMenuItemCount')
     }
 
     private showShopModal() {
@@ -173,6 +192,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 <MenuItem
                     key={`menuItem-${index}`}
                     itemData={mItem}
+                    isShowDetail={true}
+                    isShowStock={true}
+                    addCount={this.addMenuItemCount}
+                    deleteCount={this.deleteMenuItemCount}
                 />
             )
         })

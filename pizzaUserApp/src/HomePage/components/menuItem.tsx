@@ -9,10 +9,18 @@ import {
 } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 
+// interface 
+import { MenuItemDataType } from '../../common/dataModal/menuItem'
+
 interface IProps {
     // data: any;
     // navigation: any;
-    itemData: any;
+    itemData: MenuItemDataType;
+    isShowDetail: boolean;
+    isShowStock: boolean;
+
+    deleteCount: () => void;
+    addCount: () => void;
 }
 
 interface IState {
@@ -30,14 +38,22 @@ export default class MenuItem extends React.Component<IProps, IState> {
     }
 
     private addCount() {
-        console.log('addCount')
+        const { addCount } = this.props;
+        if (addCount && typeof addCount === 'function') {
+            addCount()
+        }
     }
 
     private deleteCount() {
-        console.log('deleteCount')
+        const { deleteCount } = this.props;
+        if (deleteCount && typeof deleteCount === 'function') {
+            deleteCount()
+        }
     }
 
     private renderCountBar() {
+        const selectCount = this.props.itemData.selectCount || 0;
+
         return (
             <View style={styles.countWrap}>
                 <TouchableOpacity
@@ -51,7 +67,7 @@ export default class MenuItem extends React.Component<IProps, IState> {
                         color='#00aced'
                     />
                 </TouchableOpacity>
-                <Text>1</Text>
+                <Text>{selectCount}</Text>
                 <TouchableOpacity
                     onPress={this.addCount}
                     activeOpacity={0.7}
@@ -68,33 +84,32 @@ export default class MenuItem extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const { itemData } = this.props
-        console.log('render MenuItem', itemData)
+        const { itemData, isShowDetail, isShowStock } = this.props
+        // const imgUrl = require('../../../images/pizza.png')
 
-        const imgUrl = require('../../../images/pizza.png')
-
-
-        if (itemData && itemData.item) {
-            const pName = itemData.item.itemName || ''
-            const pPrice = itemData.item.price || ''
-            // const pSize = itemData.item.price || ''
-            const pDetail = itemData.item.description || ''
-            const pCount = itemData.count || ''
-            const pPicUrl = itemData.item.picUrl || ''
+        if (itemData && itemData.imgUrl) {
+            const { name, detail, stock, price, imgUrl } = itemData;
+            const detailView = isShowDetail
+                ? (
+                    <Text style={styles.detailTxt}>{detail}</Text>
+                ) : undefined;
+            const stockView = isShowStock
+                ? (
+                    <Text style={styles.countTxt}>库存：{stock}</Text>
+                ) : undefined;
             return (
                 <View style={styles.menuItemWrap}>
                     <Image
                         style={styles.pizzaImg}
-                        source={imgUrl}
+                        source={require('../../../images/pizza.png')}
                     />
                     <View style={styles.rightPart}>
-                        <Text style={styles.nameTxt}>{pName}</Text>
-                        <Text style={styles.detailTxt}>{pDetail}</Text>
-                        <Text style={styles.countTxt}>库存：{pCount}</Text>
-                        <Text style={styles.priceTxt}>¥{pPrice}</Text>
+                        <Text style={styles.nameTxt}>{name}</Text>
+                        {detailView}
+                        {stockView}
+                        <Text style={styles.priceTxt}>¥{price}</Text>
                         {this.renderCountBar()}
                     </View>
-
                 </View>
             )
         } else {

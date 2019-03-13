@@ -11,7 +11,7 @@ const cartMock = {
                 {
                     item: {
                         itemId: '1',
-                        itemName: '吮指原味鸡',
+                        itemName: '吮指原味鸡222',
                         price: '12',
                         picUrl: '',
                         size: '13',
@@ -23,7 +23,7 @@ const cartMock = {
                 {
                     item: {
                         itemId: '2',
-                        itemName: '香辣鸡翅',
+                        itemName: '香辣鸡翅333',
                         price: '12',
                         picUrl: '',
                         size: '13',
