@@ -9,9 +9,10 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
+import Toast from 'react-native-root-toast'
 
 // component
 import TopHeader from '../common/component/TopHeader'
@@ -28,6 +29,8 @@ const MOCK = true
 // service
 import { transferMenuData, transferCartData } from './service/menuTransfer'
 
+// interface
+import { MenuItemDataType } from '../common/dataModal/menuItem'
 interface IProps {
     // data: any;
     navigation: any;
@@ -37,7 +40,7 @@ interface IState {
     searchValue: string;
     isShowShopModal: boolean;
     isShowCartModal: boolean;
-    menuList: any;
+    menuList: MenuItemDataType[];
     // cartList: any;
 }
 export default class MenuPage extends React.Component<IProps, IState> {
@@ -46,8 +49,8 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.state = {
             searchValue: '',
             isShowShopModal: false,
-            isShowCartModal: true,
-            menuList: MOCK ? transferMenuData(menuMock.menu.items) : [],
+            isShowCartModal: false,
+            menuList: [],
             // cartList: MOCK ? transferCartData(cartMock) : [],
         }
         this.navigateToPage = this.navigateToPage.bind(this)
@@ -61,17 +64,56 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     }
 
+    public componentDidMount() {
+        this.fetchMenuListData()
+    }
+
+    private fetchMenuListData() {
+        console.log('fetchMenuListData')
+        this.setState({
+            menuList: MOCK ? transferMenuData(menuMock.menu.items) : [],
+        })
+    }
+
     private navigateToPage(pageName) {
         console.log('navigateToPage', pageName)
         this.props.navigation.navigate(pageName)
     }
 
-    private addMenuItemCount() {
-        console.log('addMenuItemCount')
+    private addMenuItemCount(proId: number) {
+        console.log('addMenuItemCount', proId)
+        const { menuList } = this.state
+        let newMenuList = JSON.parse(JSON.stringify(menuList))
+        newMenuList.forEach((mItem: MenuItemDataType) => {
+            if (mItem.proId === proId) {
+                if (mItem.selectCount < mItem.stock) {
+                    mItem.selectCount++
+                } else {
+                    // Toast.show('不能再增加了')
+                }
+            }
+        })
+        this.setState({
+            menuList: newMenuList
+        })
     }
 
-    private deleteMenuItemCount() {
-        console.log('deleteMenuItemCount')
+    private deleteMenuItemCount(proId: number) {
+        console.log('deleteMenuItemCount', proId)
+        const { menuList } = this.state
+        let newMenuList = JSON.parse(JSON.stringify(menuList))
+        newMenuList.forEach((mItem: MenuItemDataType) => {
+            if (mItem.proId === proId) {
+                if (mItem.selectCount) {
+                    mItem.selectCount--
+                } else {
+                    // Toast.show('不能再减少了')
+                }
+            }
+        })
+        this.setState({
+            menuList: newMenuList
+        })
     }
 
     private showShopModal() {
@@ -138,6 +180,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                         color='#00aced'
                     />
                 </TouchableOpacity>
+                {this.renderFreshBtn()}
             </View>
         )
     }
@@ -161,6 +204,22 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 <View style={styles.shopAddr}>
                     <Text style={styles.shopAddrTxt}>address</Text>
                 </View>
+            </TouchableOpacity>
+        )
+    }
+
+    private renderFreshBtn() {
+        return (
+            <TouchableOpacity
+                style={styles.freshBtnWrap}
+                onPress={() => { this.fetchMenuListData() }}
+                activeOpacity={0.7}
+            >
+                <Icon
+                    size={20}
+                    name='refresh'
+                    color='#fff'
+                />
             </TouchableOpacity>
         )
     }
@@ -240,6 +299,11 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 20,
         left: 15
+    },
+    freshBtnWrap: {
+        position: 'absolute',
+        top: 10,
+        right: 15
     },
     // sortBar
     sortBar: {

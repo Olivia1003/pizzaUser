@@ -5,7 +5,7 @@ const cartMock = {
             userId: '1',
             shop: {
                 shopId: '222',
-                shopName: '我爱pizza（金沙江路店）',
+                shopName: '我爱pizza（金沙江路店）111',
             },
             items: [
                 {
@@ -24,7 +24,7 @@ const cartMock = {
                     item: {
                         itemId: '2',
                         itemName: '香辣鸡翅333',
-                        price: '12',
+                        price: '20',
                         picUrl: '',
                         size: '13',
                         description: '',
@@ -39,7 +39,7 @@ const cartMock = {
             userId: '1',
             shop: {
                 shopId: '222',
-                shopName: '我爱pizza（金沙江路店）',
+                shopName: '我爱pizza（金沙江路店）222',
             },
             items: [
                 {

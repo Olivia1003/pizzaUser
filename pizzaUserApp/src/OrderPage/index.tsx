@@ -11,27 +11,27 @@ import {
     Text, TouchableOpacity
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
-import {orderMock} from '../common/mock/orderMock'
-import {Button, Icon} from 'react-native-elements'
+import { orderMock } from '../common/mock/orderMock'
+import { Button, Icon } from 'react-native-elements'
 
-const MOCK=true;
+const MOCK = true;
 
 interface IProps {
     // data: any;
 }
-interface IState{
+interface IState {
     orderList: any
 }
 
-export default class OrderPage extends React.Component<IProps,IState> {
+export default class OrderPage extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            orderList:MOCK?orderMock.orderList:[]
+            orderList: MOCK ? orderMock.orderList : []
         };
     }
 
-    private deleteOrder(orderId){
+    private deleteOrder(orderId) {
         console.log('delete ', orderId);
         /*let list = JSON.parse(JSON.stringify(this.state.orderList));
         this.setState({
@@ -40,7 +40,7 @@ export default class OrderPage extends React.Component<IProps,IState> {
 
         })*/
     }
-    private checkOrder(orderId){
+    private checkOrder(orderId) {
         console.log('check ', orderId);
     }
 
@@ -48,17 +48,17 @@ export default class OrderPage extends React.Component<IProps,IState> {
         return (
             <View style={styles.orderPage}>
                 <TopHeader title={'我的订单'} />
-                    <ScrollView>
-                        {this.renderOrderList()}
-                    </ScrollView>
+                <ScrollView>
+                    {this.renderOrderList()}
+                </ScrollView>
             </View>
         )
     }
 
     renderOrderList() {
-        const {orderList} = this.state;
-        return orderList.map(order =>{
-            const pressCallback=()=>{
+        const { orderList } = this.state;
+        return orderList.map(order => {
+            const pressCallback = () => {
                 this.deleteOrder(order.orderId)
             };
             return (
@@ -85,7 +85,7 @@ export default class OrderPage extends React.Component<IProps,IState> {
         })
     }
     renderItemList(items) {
-        return items.map(itemObj =>{
+        return items.map(itemObj => {
             var item = itemObj.item;
             var count = itemObj.count;
             return (
@@ -98,26 +98,26 @@ export default class OrderPage extends React.Component<IProps,IState> {
         })
     }
 
-    renderButton(order){
+    renderButton(order) {
         //判断按钮状态
-        if(order.state == 'canceled'){
+        if (order.state == 'canceled') {
             return (
-                <Button  title="已取消"
-                         disabled={true}
-                         disabledStyle={styles.btnBase}
-                         disabledTitleStyle={styles.btnTitleBase}
-                         raised={true}></Button>
+                <Button title="已取消"
+                    disabled={true}
+                    disabledStyle={styles.btnBase}
+                    disabledTitleStyle={styles.btnTitleBase}
+                    raised={true}></Button>
             )
-        }else{
-            const pressCallback=()=>{
+        } else {
+            const pressCallback = () => {
                 this.checkOrder(order.orderId)
             };
             return (
-                <Button  onPress={pressCallback}
-                         title="查看详情"
-                         buttonStyle={[styles.btnBase]}
-                         titleStyle={[styles.btnTitleBase]}
-                         raised={true}></Button>
+                <Button onPress={pressCallback}
+                    title="查看详情"
+                    buttonStyle={[styles.btnBase]}
+                    titleStyle={[styles.btnTitleBase]}
+                    raised={true}></Button>
             )
         }
 
@@ -126,7 +126,7 @@ export default class OrderPage extends React.Component<IProps,IState> {
 }
 
 const styles = StyleSheet.create({
-    orderCard:{
+    orderCard: {
         flexDirection: 'column',
         margin: 10,
         backgroundColor: '#FFFFFF',
@@ -138,56 +138,56 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         borderRadius: 5
     },
-    itemCard:{
+    itemCard: {
         flexDirection: 'row',
         marginTop: 10
     },
-    head:{
+    head: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 10
     },
-    bottom:{
+    bottom: {
         flexDirection: 'row',
         marginTop: 15,
         justifyContent: 'space-between'
     },
-    itemName:{
+    itemName: {
         width: '40%'
     },
-    itemCount:{
+    itemCount: {
         width: '30%'
     },
-    itemPrice:{
+    itemPrice: {
         width: '30%'
     },
-    itemNameText:{
+    itemNameText: {
         fontSize: 20
     },
-    itemCountText:{
+    itemCountText: {
         fontSize: 20
     },
-    itemPriceText:{
+    itemPriceText: {
         fontSize: 20,
         color: '#FF7F50'
     },
-    itemTotalPriceText:{
+    itemTotalPriceText: {
         fontSize: 20,
         color: '#FF7F50'
     },
-    orderPage:{
+    orderPage: {
         backgroundColor: '#F5F5F5',
         flex: 1
     },
 
-    btnBase:{
+    btnBase: {
         height: 25,
         padding: 3
     },
-    btnTitleBase:{
+    btnTitleBase: {
         fontSize: 14
     },
-    btn:{
+    btn: {
         color: '#1C7ED7'
     },
 });

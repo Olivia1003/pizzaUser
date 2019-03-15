@@ -18,9 +18,8 @@ interface IProps {
     itemData: MenuItemDataType;
     isShowDetail: boolean;
     isShowStock: boolean;
-
-    deleteCount: () => void;
-    addCount: () => void;
+    addCount: (id:number) => void;
+    deleteCount: (id:number) => void;
 }
 
 interface IState {
@@ -38,16 +37,16 @@ export default class MenuItem extends React.Component<IProps, IState> {
     }
 
     private addCount() {
-        const { addCount } = this.props;
-        if (addCount && typeof addCount === 'function') {
-            addCount()
+        const { addCount, itemData } = this.props;
+        if (addCount && typeof addCount === 'function' && itemData.proId !== undefined) {
+            addCount(itemData.proId)
         }
     }
 
     private deleteCount() {
-        const { deleteCount } = this.props;
-        if (deleteCount && typeof deleteCount === 'function') {
-            deleteCount()
+        const { deleteCount, itemData } = this.props;
+        if (deleteCount && typeof deleteCount === 'function' && itemData.proId !== undefined) {
+            deleteCount(itemData.proId)
         }
     }
 
