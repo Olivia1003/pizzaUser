@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 
+// components
+import { Button, Menu, Icon, DatePicker } from 'antd';
 import './index.css'
+
+const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
+
 
 export default class HomePage extends Component {
 
@@ -124,6 +129,9 @@ export default class HomePage extends Component {
         return (
             <div>
                 <p>home</p>
+                <Button type="primary">Primary</Button>
+                <MonthPicker placeholder="Select month" />
+
                 <p><Link to='/cart'>to cart</Link></p>
                 <p><Link to='/order'>to order</Link></p>
                 <p><Link to='/my'>to my</Link></p>
