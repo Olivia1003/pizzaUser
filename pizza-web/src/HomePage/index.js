@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 
 // components
-import { Button, Menu, Icon, DatePicker } from 'antd';
+import { Button, Layout } from 'antd'
 import './index.css'
 
-const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
+const {
+    Header, Footer, Sider, Content,
+} = Layout
+
 
 
 export default class HomePage extends Component {
@@ -127,24 +130,30 @@ export default class HomePage extends Component {
         console.log('render homePage')
 
         return (
+            // <div>
+            //     <p>home</p>
+            //     <Button type="primary">Primary</Button>
+
+            //     <p><Link to='/cart'>to cart</Link></p>
+            //     <p><Link to='/order'>to order</Link></p>
+            //     <p><Link to='/my'>to my</Link></p>
+
+            //     {/* <TopHeader title={'首页'} /> */}
+            //     {/* <MySearchBar /> */}
+            //     {/* {this.renderSortBar()} */}
+            //     {this.renderShopBar()}
+            //     {/* {this.renderMenuList()} */}
+            //     {/* {this.renderCartEntry()} */}
+            //     {/* modal */}
+            //     {/* {this.renderShopModal()} */}
+            //     {/* {this.renderCartModal()} */}
+            // </div>
             <div>
-                <p>home</p>
-                <Button type="primary">Primary</Button>
-                <MonthPicker placeholder="Select month" />
-
-                <p><Link to='/cart'>to cart</Link></p>
-                <p><Link to='/order'>to order</Link></p>
-                <p><Link to='/my'>to my</Link></p>
-
-                {/* <TopHeader title={'首页'} /> */}
-                {/* <MySearchBar /> */}
-                {/* {this.renderSortBar()} */}
-                {this.renderShopBar()}
-                {/* {this.renderMenuList()} */}
-                {/* {this.renderCartEntry()} */}
-                {/* modal */}
-                {/* {this.renderShopModal()} */}
-                {/* {this.renderCartModal()} */}
+                <Layout>
+                    <Header>Header</Header>
+                    <Content>Content</Content>
+                    <Footer>Footer</Footer>
+                </Layout>
             </div>
         )
     }
