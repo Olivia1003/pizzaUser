@@ -41,6 +41,7 @@ interface IState {
     isShowShopModal: boolean;
     isShowCartModal: boolean;
     menuList: MenuItemDataType[];
+    priceSortUp: boolean; // 是否价格升序排序
     // cartList: any;
 }
 export default class MenuPage extends React.Component<IProps, IState> {
@@ -51,6 +52,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
             isShowShopModal: false,
             isShowCartModal: false,
             menuList: [],
+            priceSortUp: false
             // cartList: MOCK ? transferCartData(cartMock) : [],
         }
         this.navigateToPage = this.navigateToPage.bind(this)
@@ -61,6 +63,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
         this.addMenuItemCount = this.addMenuItemCount.bind(this)
         this.deleteMenuItemCount = this.deleteMenuItemCount.bind(this)
+        this.sortMenuByPrice = this.sortMenuByPrice.bind(this)
 
     }
 
@@ -116,6 +119,23 @@ export default class MenuPage extends React.Component<IProps, IState> {
         })
     }
 
+    private sortMenuByPrice() {
+        // console.log('sortMenuByPrice', this.state)
+        const { priceSortUp, menuList } = this.state
+        console.log('sortMenuByPrice', priceSortUp, menuList)
+        const newMenuList = JSON.parse(JSON.stringify(menuList))
+        newMenuList.sort((a, b) => {
+            const diff = priceSortUp
+                ? Number(a.price) - Number(b.price)
+                : Number(b.price) - Number(a.price)
+            return diff
+        })
+        this.setState({
+            priceSortUp: !priceSortUp,
+            menuList: newMenuList
+        })
+    }
+
     private showShopModal() {
         console.log('showShopModal')
         this.setState({
@@ -164,22 +184,40 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     private renderSortBar() {
         const priceSortUp = false
-        const iconName = priceSortUp ? 'trending-up' : 'trending-down'
+        const saleSortUp = false
+        const priceIconName = priceSortUp ? 'trending-up' : 'trending-down'
+        const saleIconName = saleSortUp ? 'trending-up' : 'trending-down'
 
         return (
             <View style={styles.sortBar}>
+                {/* 价格 */}
                 <TouchableOpacity
                     style={styles.priceSortBtn}
                     activeOpacity={0.7}
+                    onPress={this.sortMenuByPrice}
                 >
                     <Text style={styles.sortPriceTxt}>价格</Text>
                     <Icon
                         reverse
                         size={15}
-                        name={iconName}
+                        name={priceIconName}
                         color='#00aced'
                     />
                 </TouchableOpacity>
+                {/* 销量 */}
+                <TouchableOpacity
+                    style={styles.priceSortBtn}
+                    activeOpacity={0.7}
+                >
+                    <Text style={styles.sortPriceTxt}>销量</Text>
+                    <Icon
+                        reverse
+                        size={15}
+                        name={saleIconName}
+                        color='#00aced'
+                    />
+                </TouchableOpacity>
+                {/* 刷新 */}
                 {this.renderFreshBtn()}
             </View>
         )
@@ -307,11 +345,14 @@ const styles = StyleSheet.create({
     },
     // sortBar
     sortBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#00aced',
         height: 40,
         paddingHorizontal: 10,
     },
     priceSortBtn: {
+        marginRight: 10,
         width: 80,
         height: 40,
         flexDirection: 'row',

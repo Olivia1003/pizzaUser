@@ -6,8 +6,8 @@ const menuMock = {
             {
                 item: {
                     itemId: 1,
-                    itemName: '吮指原味鸡222',
-                    price: '12',
+                    itemName: '吮指原味鸡111',
+                    price: '22',
                     picUrl: '',
                     size: '13',
                     description: 'detail',
@@ -18,7 +18,19 @@ const menuMock = {
             {
                 item: {
                     itemId: 2,
-                    itemName: '香辣鸡翅111',
+                    itemName: '香辣鸡翅222',
+                    price: '30',
+                    picUrl: '',
+                    size: '13',
+                    description: 'detail',
+                    state: '',
+                },
+                count: 3,
+            },
+            {
+                item: {
+                    itemId: 3,
+                    itemName: '香辣鸡翅333',
                     price: '12',
                     picUrl: '',
                     size: '13',

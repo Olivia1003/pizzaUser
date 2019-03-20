@@ -1,5 +1,6 @@
 import { func } from "prop-types";
 
+// 首页菜单
 export function transferMenuData(serverData) {
     console.log('transferMenuData', serverData)
     const menuList = serverData.map((mItem) => {
@@ -19,17 +20,18 @@ export function transferMenuData(serverData) {
     return menuList
 }
 
+// 首页单购物车
 export function transferCartData(serverData) {
     console.log('transferCartData', serverData)
     const shopName = serverData && serverData.shop && serverData.shop.shopName || ''
-    let cartList = []
+    let cartItemList = []
     if (serverData && serverData.items) {
-        cartList = serverData.items.map((cItem) => {
+        cartItemList = serverData.items.map((cItem) => {
             return {
                 proId: cItem.item.itemId,
                 name: cItem.item.itemName,
                 detail: cItem.item.description,
-                // stock: cItem.count,
+                stock: 100,
                 selectCount: cItem.count,
                 price: cItem.item.price,
                 imgUrl: '../../../images/pizza.png'
@@ -37,7 +39,7 @@ export function transferCartData(serverData) {
         })
     }
     return {
-        cartList,
+        cartItemList,
         shopName
     }
 }

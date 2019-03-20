@@ -18,6 +18,7 @@ import MenuItem from '../components/MenuItem'
 
 // interface 
 import { MenuItemDataType } from '../../common/dataModal/menuItem'
+import { cartSetItemType } from '../../common/dataModal/cart'
 
 // server
 import { transferCartData } from '../service/menuTransfer'
@@ -33,6 +34,7 @@ interface IProps {
 }
 
 interface IState {
+    // cartSetData: cartSetItemType; // 一个shop的信息，包括购物车list
     cartSetData: any; // 一个shop的信息，包括购物车list
     totalPrice: number;
 }
@@ -41,9 +43,16 @@ export default class CartModal extends React.Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
-            cartSetData: {},
+            cartSetData: {
+                shopId: '',
+                shopName: '',
+                cartItemList: []
+            },
             totalPrice: 0
         }
+
+        this.addCartItemCount = this.addCartItemCount.bind(this)
+        this.deleteCartItemCount = this.deleteCartItemCount.bind(this)
     }
 
     componentDidMount() {
@@ -61,12 +70,51 @@ export default class CartModal extends React.Component<IProps, IState> {
         }
     }
 
-    private addCartItemCount() {
-        console.log('addCartItemCount')
+    private addCartItemCount(proId: number) {
+        const { cartSetData } = this.state
+        console.log('addCartItemCount', cartSetData, proId)
+        if (cartSetData && cartSetData.cartItemList) {
+            let newCartList = JSON.parse(JSON.stringify(cartSetData.cartItemList))
+            newCartList.forEach((mItem: MenuItemDataType) => {
+                if (mItem.proId === proId) {
+                    if (mItem.selectCount < mItem.stock) {
+                        mItem.selectCount++
+                    } else {
+                        // Toast.show('不能再增加了')
+                    }
+                }
+            })
+            const newCartSetData = {
+                cartItemList: newCartList
+            }
+            this.setState({
+                cartSetData: newCartSetData
+            })
+        }
     }
 
-    private deleteCartItemCount() {
+    private deleteCartItemCount(proId: number) {
         console.log('deleteCartItemCount')
+        const { cartSetData } = this.state
+        console.log('addCartItemCount', cartSetData, proId)
+        if (cartSetData && cartSetData.cartItemList) {
+            let newCartList = JSON.parse(JSON.stringify(cartSetData.cartItemList))
+            newCartList.forEach((mItem: MenuItemDataType) => {
+                if (mItem.proId === proId) {
+                    if (mItem.selectCount > 0) {
+                        mItem.selectCount--
+                    } else {
+                        // Toast.show('不能再减少了')
+                    }
+                }
+            })
+            const newCartSetData = {
+                cartItemList: newCartList
+            }
+            this.setState({
+                cartSetData: newCartSetData
+            })
+        }
     }
 
     private submitCartOrder() {
@@ -80,8 +128,8 @@ export default class CartModal extends React.Component<IProps, IState> {
     private renderCartItemList() {
         const { cartSetData } = this.state
         console.log('renderCartItemList', cartSetData)
-        if (cartSetData && cartSetData.cartList) {
-            const cartListView = cartSetData.cartList.map((pItem, index) => {
+        if (cartSetData && cartSetData.cartItemList) {
+            const cartListView = cartSetData.cartItemList.map((pItem, index) => {
                 if (pItem) {
                     return (
                         <MenuItem
@@ -89,8 +137,8 @@ export default class CartModal extends React.Component<IProps, IState> {
                             itemData={pItem}
                             isShowDetail={false}
                             isShowStock={false}
-                            deleteCount={() => { this.deleteCartItemCount() }}
-                            addCount={() => { this.addCartItemCount() }}
+                            addCount={this.addCartItemCount}
+                            deleteCount={this.deleteCartItemCount}
                         />
                     )
                 }
@@ -147,7 +195,7 @@ export default class CartModal extends React.Component<IProps, IState> {
 const styles = StyleSheet.create({
     cartModalWrap: {
         flex: 1,
-        backgroundColor: '#eee'
+        // backgroundColor: '#eee'
     },
     // cartItemWrap: {
     //     flexDirection: 'row',

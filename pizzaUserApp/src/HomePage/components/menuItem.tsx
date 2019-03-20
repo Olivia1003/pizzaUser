@@ -18,8 +18,8 @@ interface IProps {
     itemData: MenuItemDataType;
     isShowDetail: boolean;
     isShowStock: boolean;
-    addCount: (id:number) => void;
-    deleteCount: (id:number) => void;
+    addCount: (id: number) => void;
+    deleteCount: (id: number) => void;
 }
 
 interface IState {
@@ -90,24 +90,34 @@ export default class MenuItem extends React.Component<IProps, IState> {
             const { name, detail, stock, price, imgUrl } = itemData;
             const detailView = isShowDetail
                 ? (
-                    <Text style={styles.detailTxt}>{detail}</Text>
+                    <View style={styles.detail}>
+                        <Text style={styles.detailTxt}>{detail}</Text>
+                    </View>
                 ) : undefined;
             const stockView = isShowStock
                 ? (
-                    <Text style={styles.countTxt}>库存：{stock}</Text>
+                    <View style={styles.stock}>
+                        <Text style={styles.stockTxt}>库存：{stock}</Text>
+                    </View>
                 ) : undefined;
             return (
                 <View style={styles.menuItemWrap}>
-                    <Image
-                        style={styles.pizzaImg}
-                        source={require('../../../images/pizza.png')}
-                    />
-                    <View style={styles.rightPart}>
-                        <Text style={styles.nameTxt}>{name}</Text>
-                        {detailView}
-                        {stockView}
-                        <Text style={styles.priceTxt}>¥{price}</Text>
-                        {this.renderCountBar()}
+                    <View style={styles.menuItem}>
+                        <Image
+                            style={styles.pizzaImg}
+                            source={require('../../../images/pizza.png')}
+                        />
+                        <View style={styles.rightPart}>
+                            <Text style={styles.nameTxt}>{name}</Text>
+                            {detailView}
+                            <View style={styles.bottomLine}>
+                                {stockView}
+                                <View style={styles.price}>
+                                    <Text style={styles.priceTxt}>¥{price}</Text>
+                                </View>
+                                {this.renderCountBar()}
+                            </View>
+                        </View>
                     </View>
                 </View>
             )
@@ -123,25 +133,31 @@ export default class MenuItem extends React.Component<IProps, IState> {
 
 const shadow = {
     shadowOffset: {
-        width: 3,
-        height: 3
+        width: 5,
+        height: 5
     },
     shadowOpacity: 0.1,
+    shadowColor: '#333',
+    shadowRadius: 3,
 }
 
 const styles = StyleSheet.create({
     menuItemWrap: {
+        marginTop: 10,
+        ...shadow,
+    },
+    menuItem: {
         flexDirection: 'row',
         height: 90,
-        marginTop: 10,
         overflow: 'hidden',
         borderRadius: 5,
-        backgroundColor: '#ffffff',
-        ...shadow
+        backgroundColor: '#fff',
     },
     pizzaImg: {
         width: 90,
         height: 90,
+        // borderTopLeftRadius: 5,
+        // borderBottomLeftRadius: 5,
         backgroundColor: '#ccc'
     },
     rightPart: {
@@ -154,25 +170,43 @@ const styles = StyleSheet.create({
         fontSize: 17,
         color: '#333'
     },
+    detail: {
+        marginTop: 5
+    },
     detailTxt: {
         fontSize: 13,
         color: '#aaa'
     },
-    countTxt: {
-        fontSize: 13,
-        color: '#333'
-    },
-    priceTxt: {
-        fontSize: 13,
-        color: '#333'
-    },
-    // count
-    countWrap: {
+    // bottom
+    bottomLine: {
         flexDirection: 'row',
         alignItems: 'center',
         position: 'absolute',
         bottom: 5,
         right: 10
+    },
+    stock: {
+        marginRight: 10
+    },
+    stockTxt: {
+        fontSize: 15,
+        color: '#333'
+    },
+    price: {
+        marginRight: 10
+    },
+    priceTxt: {
+        fontSize: 17,
+        // fontWeight: 'bold',
+        color: '#FF7F50'
+    },
+    // count
+    countWrap: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        // position: 'absolute',
+        // bottom: 5,
+        // right: 10
     },
 
 

@@ -19,8 +19,8 @@ import MyPage from './dest/MyPage/index'
 
 const TabNavigator = createBottomTabNavigator(
   {
-    Cart: CartPage,
     Home: HomePage,
+    Cart: CartPage,
     Order: OrderPage,
     MyInfo: MyPage
   },
