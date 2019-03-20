@@ -3,15 +3,54 @@ import { Link } from 'react-router-dom'
 
 // components
 import { Button, Layout } from 'antd'
+import TopHeader from '../common/component/TopHeader'
+import MenuItem from './components/menuItem'
+
+// css
 import './index.css'
 
-const {
-    Header, Footer, Sider, Content,
-} = Layout
+// service
+import { transferMenuData, transferCartData } from './service/menuTransfer'
 
+// mock
+import { menuMock } from '../common/mock/menuMock'
 
+const MOCK = true
+const { Header, Footer, Content } = Layout
 
 export default class HomePage extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            searchValue: '',
+            isShowShopModal: false,
+            isShowCartModal: false,
+            menuList: [],
+            priceSortUp: false
+            // cartList: MOCK ? transferCartData(cartMock) : [],
+        }
+        // this.showShopModal = this.showShopModal.bind(this)
+        // this.hideShopModal = this.hideShopModal.bind(this)
+        // this.showCartModal = this.showCartModal.bind(this)
+        // this.hideCartModal = this.hideCartModal.bind(this)
+
+        // this.addMenuItemCount = this.addMenuItemCount.bind(this)
+        // this.deleteMenuItemCount = this.deleteMenuItemCount.bind(this)
+        // this.sortMenuByPrice = this.sortMenuByPrice.bind(this)
+
+    }
+
+    componentDidMount() {
+        this.fetchMenuListData()
+    }
+
+    fetchMenuListData() {
+        console.log('fetchMenuListData')
+        this.setState({
+            menuList: MOCK ? transferMenuData(menuMock.menu.items) : [],
+        })
+    }
 
 
     // 地址modal
@@ -49,22 +88,22 @@ export default class HomePage extends Component {
     //     )
     // }
 
-    renderShopBar() {
-        return (
-            <button
-                className="shopBar"
-                onPress={this.showShopModal}
-                activeOpacity={1.0}
-            >
-                <div className="shopName">
-                    <p className="shopNameTxt">name</p>
-                </div>
-                <div className="shopAddr">
-                    <p className="shopAddrTxt">address</p>
-                </div>
-            </button>
-        )
-    }
+    // renderShopBar() {
+    //     return (
+    //         <button
+    //             className="shopBar"
+    //             onPress={this.showShopModal}
+    //             activeOpacity={1.0}
+    //         >
+    //             <div className="shopName">
+    //                 <p className="shopNameTxt">name</p>
+    //             </div>
+    //             <div className="shopAddr">
+    //                 <p className="shopAddrTxt">address</p>
+    //             </div>
+    //         </button>
+    //     )
+    // }
 
 
     // renderFreshBtn() {
@@ -102,59 +141,50 @@ export default class HomePage extends Component {
     //     )
     // }
 
-    // renderMenuList() {
-    //     const { menuList } = this.state
-    //     // console.log('renderMenuList', menuList)
-
-    //     const menuListView = menuList.map((mItem, index) => {
-    //         return (
-    //             <MenuItem
-    //                 key={`menuItem-${index}`}
-    //                 itemData={mItem}
-    //                 isShowDetail={true}
-    //                 isShowStock={true}
-    //                 addCount={this.addMenuItemCount}
-    //                 deleteCount={this.deleteMenuItemCount}
-    //             />
-    //         )
-    //     })
-
-    //     return (
-    //         <div style={styles.menuList}>
-    //             {menuListView}
-    //         </div>
-    //     )
-    // }
+    renderMenuList() {
+        const { menuList } = this.state
+        // console.log('renderMenuList', menuList)
+        const menuListView = menuList.map((mItem, index) => {
+            return (
+                <MenuItem
+                    key={`menuItem-${index}`}
+                    itemData={mItem}
+                    isShowDetail={true}
+                    isShowStock={true}
+                    addCount={this.addMenuItemCount}
+                    deleteCount={this.deleteMenuItemCount}
+                />
+            )
+        })
+        return (
+            <div className="menuList">
+                {menuListView}
+            </div>
+        )
+    }
 
     render() {
         console.log('render homePage')
 
         return (
             // <div>
-            //     <p>home</p>
-            //     <Button type="primary">Primary</Button>
-
-            //     <p><Link to='/cart'>to cart</Link></p>
-            //     <p><Link to='/order'>to order</Link></p>
-            //     <p><Link to='/my'>to my</Link></p>
-
-            //     {/* <TopHeader title={'首页'} /> */}
             //     {/* <MySearchBar /> */}
             //     {/* {this.renderSortBar()} */}
             //     {this.renderShopBar()}
-            //     {/* {this.renderMenuList()} */}
             //     {/* {this.renderCartEntry()} */}
             //     {/* modal */}
             //     {/* {this.renderShopModal()} */}
             //     {/* {this.renderCartModal()} */}
             // </div>
-            <div>
-                <Layout>
-                    <Header>Header</Header>
-                    <Content>Content</Content>
-                    <Footer>Footer</Footer>
-                </Layout>
-            </div>
+            <Layout>
+                <Header>
+                    <TopHeader />
+                </Header>
+                <Content>
+                    {this.renderMenuList()}
+                </Content>
+                <Footer>Footer</Footer>
+            </Layout>
         )
     }
 }

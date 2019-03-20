@@ -1,0 +1,23 @@
+.menuItemWrap {
+    display: flex;
+    margin-top: 30px;
+    width: 30%;
+    height: 300px;
+    /* border: 1px solid #333; */
+}
+
+.menuItem {
+    /* display: flex;
+    flex-grow: 1; */
+    width: 100%;
+    background-color: #fff;
+}
+
+.pizzaImg {
+    width: 100%;
+    height: 200px;
+}
+
+.bottomPart {
+    padding: 10px 15px;
+}

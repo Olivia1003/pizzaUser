@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 
+// components
+import { Button, Layout } from 'antd'
+import TopHeader from '../common/component/TopHeader'
+
+const { Header, Footer, Content } = Layout
+
 export default class MyPage extends Component {
 
     render() {
         return (
-            <div>
-                <p>my page</p>
-                <Link to='/'>to Home</Link>
-            </div>
+            <Layout>
+                <Header>
+                    <TopHeader />
+                </Header>
+                <Content>MyPage</Content>
+                <Footer>Footer</Footer>
+            </Layout>
         )
     }
 }
