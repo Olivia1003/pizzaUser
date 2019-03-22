@@ -31,6 +31,7 @@ interface IProps {
     // title: string;
     isShow: boolean;
     hideModalHandle: any;
+    navigateToNewOrder: any;
 }
 
 interface IState {
@@ -53,6 +54,7 @@ export default class CartModal extends React.Component<IProps, IState> {
 
         this.addCartItemCount = this.addCartItemCount.bind(this)
         this.deleteCartItemCount = this.deleteCartItemCount.bind(this)
+        this.submitCartOrder = this.submitCartOrder.bind(this)
     }
 
     componentDidMount() {
@@ -119,6 +121,10 @@ export default class CartModal extends React.Component<IProps, IState> {
 
     private submitCartOrder() {
         console.log('submitCartOrder')
+        const { navigateToNewOrder } = this.props
+        if (navigateToNewOrder && typeof navigateToNewOrder === 'function') {
+            navigateToNewOrder('NewOrder')
+        }
     }
 
     private calculateTotalPrice(cartList) {

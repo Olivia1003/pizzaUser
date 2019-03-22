@@ -1,6 +1,6 @@
 
 import * as React from 'react'
-import { Platform, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Platform, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native'
 import {
   createStackNavigator,
   createAppContainer,
@@ -9,15 +9,20 @@ import {
 // import { Icon } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+// tab page
 import HomePage from './dest/HomePage/index'
 import CartPage from './dest/CartPage/index'
 import OrderPage from './dest/OrderPage/index'
 import MyPage from './dest/MyPage/index'
 
+// other page
+import NewOrder from './dest/NewOrder/index'
+import PayOver from './dest/PayOver/index'
 
-// export default createAppContainer(AppNavigator)
+const SCREEN_WIDTH = Dimensions.get('window').width
+const SCREEN_HEIGHT = Dimensions.get('window').height
 
-const TabNavigator = createBottomTabNavigator(
+const MainPage = createBottomTabNavigator(
   {
     Home: HomePage,
     Cart: CartPage,
@@ -74,18 +79,41 @@ const TabNavigator = createBottomTabNavigator(
     tabBarPosition: 'bottom',
     swipeEnabled: true,
     animationEnabled: true,
-
   }
 )
 
+const stackNavigator = createStackNavigator({
+  Home: {
+    screen: MainPage,
+    navigationOptions: () => ({
+      header: null,
+      headerBackTitle: null,
+    }),
+  },
+  NewOrder: {
+    screen: NewOrder,
+    navigationOptions: () => ({
+      title: '下单',
+      // headerBackTitle: null,
+    }),
+  },
+  PayOver: {
+    screen: PayOver,
+    navigationOptions: () => ({
+      header: null
+    }),
+  }
+})
 
-const RootStack = createAppContainer(TabNavigator)
+const RootPage = createAppContainer(stackNavigator)
 
 export default class App extends React.Component {
   render() {
     return (
+      // <RootPage />
+
       <View style={styles.container}>
-        <RootStack />
+        <RootPage />
       </View>
     );
   }
@@ -94,6 +122,17 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    // backgroundColor: '#F5FCFF',
+    backgroundColor: '#ccc'
   },
+  // fullPage: {
+  //   width: 100,
+  //   height: 100,
+  //   position: 'absolute',
+  //   left: 0,
+  //   top: 0,
+  //   backgroundColor: '#ccc'
+  // }
 });
