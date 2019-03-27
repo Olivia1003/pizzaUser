@@ -14,6 +14,8 @@ import TopHeader from '../common/component/TopHeader'
 import { orderMock } from '../common/mock/orderMock'
 import { Button, Icon } from 'react-native-elements'
 
+import MapModal from "./components/MapModal";
+
 const MOCK = true;
 
 interface IProps {
@@ -21,14 +23,18 @@ interface IProps {
 }
 interface IState {
     orderList: any
+    isShowMapModal: any
 }
 
 export default class OrderPage extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
+            isShowMapModal: false,
             orderList: MOCK ? orderMock.orderList : []
         };
+        this.showMapModal = this.showMapModal.bind(this)
+        this.hideMapModal = this.hideMapModal.bind(this)
     }
 
     private deleteOrder(orderId) {
@@ -42,6 +48,7 @@ export default class OrderPage extends React.Component<IProps, IState> {
     }
     private checkOrder(orderId) {
         console.log('check ', orderId);
+        this.showMapModal()
     }
 
     render() {
@@ -51,6 +58,8 @@ export default class OrderPage extends React.Component<IProps, IState> {
                 <ScrollView>
                     {this.renderOrderList()}
                 </ScrollView>
+                {this.renderMapModal()}
+
             </View>
         )
     }
@@ -120,7 +129,29 @@ export default class OrderPage extends React.Component<IProps, IState> {
                     raised={true}></Button>
             )
         }
+    }
 
+    private showMapModal() {
+        console.log('showMapModal')
+        this.setState({
+            isShowMapModal: true
+        })
+    }
+
+    private hideMapModal() {
+        console.log('hideCartModal')
+        this.setState({
+            isShowMapModal: false
+        })
+    }
+
+    // 地址modal
+    private renderMapModal() {
+        console.log('renderMapModal')
+        const { isShowMapModal } = this.state
+        return (
+            <MapModal isShow={isShowMapModal} hideModalHandle={this.hideMapModal} />
+        )
     }
 
 }
