@@ -186,18 +186,17 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     private renderSwiper() {
         return (
-            <View></View>
-            // <Swiper style={styles.wrapper}>
-            //     <View style={styles.slide1}>
-            //         <Text style={styles.text}>Hello Swiper</Text>
-            //     </View>
-            //     <View style={styles.slide2}>
-            //         <Text style={styles.text}>Beautiful</Text>
-            //     </View>
-            //     <View style={styles.slide3}>
-            //         <Text style={styles.text}>And simple</Text>
-            //     </View>
-            // </Swiper>
+            <Swiper style={styles.wrapper}>
+                <View style={styles.slide1}>
+                    <Text style={styles.text}>Hello Swiper</Text>
+                </View>
+                <View style={styles.slide2}>
+                    <Text style={styles.text}>Beautiful</Text>
+                </View>
+                <View style={styles.slide3}>
+                    <Text style={styles.text}>And simple</Text>
+                </View>
+            </Swiper>
         )
     }
 
@@ -449,6 +448,8 @@ const styles = StyleSheet.create({
     },
     // swiper
     wrapper: {
+        // width:200,
+        // height:200
     },
     slide1: {
         flex: 1,
