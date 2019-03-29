@@ -19,7 +19,6 @@ interface IProps {
 
 export default class TopHeader extends React.Component<IProps> {
     render() {
-        console.log('render TopHeader')
         const { title } = this.props
         return (
             <View style={styles.headerWrap}>
@@ -27,6 +26,7 @@ export default class TopHeader extends React.Component<IProps> {
                     leftComponent={{ icon: 'menu', color: '#fff' }}
                     centerComponent={{ text: title, style: { color: '#fff' } }}
                     rightComponent={{ icon: 'home', color: '#fff' }}
+                    backgroundColor={'#00aced'}
                 />
 
             </View>

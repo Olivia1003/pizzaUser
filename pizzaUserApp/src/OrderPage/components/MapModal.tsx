@@ -63,7 +63,7 @@ export default class MapModal extends React.Component<IProps, IState> {
                 height={SCREEN_HEIGHT - 200}
             >
                 <WebView
-                    source={{ uri: 'http://localhost:63342/SeatBack/html/userMap.html?_ijt=ncmo0q9i4lr3jgtheu58u7o5ia' }}
+                    source={{ uri: 'http://localhost:63342/SeatBack/html/userMap.html?_ijt=bs2ohth1c6lohfh2gjm314bblp' }}
                     style={{ marginTop: 20 }}
                 />
             </Overlay>
