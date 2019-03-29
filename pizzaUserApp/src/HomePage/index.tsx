@@ -56,6 +56,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
             // cartList: MOCK ? transferCartData(cartMock) : [],
         }
         this.navigateToPage = this.navigateToPage.bind(this)
+        this.navigateToNewOrder = this.navigateToNewOrder.bind(this)
         this.showShopModal = this.showShopModal.bind(this)
         this.hideShopModal = this.hideShopModal.bind(this)
         this.showCartModal = this.showCartModal.bind(this)
@@ -64,6 +65,11 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.addMenuItemCount = this.addMenuItemCount.bind(this)
         this.deleteMenuItemCount = this.deleteMenuItemCount.bind(this)
         this.sortMenuByPrice = this.sortMenuByPrice.bind(this)
+
+        // temp
+        setTimeout(() => {
+            this.showCartModal()
+        }, 100);
 
     }
 
@@ -78,9 +84,20 @@ export default class MenuPage extends React.Component<IProps, IState> {
         })
     }
 
-    private navigateToPage(pageName) {
-        console.log('navigateToPage', pageName)
+    private navigateToPage(pageName: string) {
+        console.log('navigateToPage---', pageName)
         this.props.navigation.navigate(pageName)
+    }
+
+    private navigateToNewOrder() {
+        console.log('navigateToNewOrder')
+        const _this = this
+        this.setState({
+            isShowCartModal: false
+        }, () => {
+            console.log('navigateToNewOrder dismiss over')
+            _this.props.navigation.navigate('NewOrder')
+        })
     }
 
     private addMenuItemCount(proId: number) {
@@ -178,7 +195,11 @@ export default class MenuPage extends React.Component<IProps, IState> {
         console.log('renderCartModal')
         const { isShowCartModal } = this.state
         return (
-            <CartModal isShow={isShowCartModal} hideModalHandle={this.hideCartModal} />
+            <CartModal
+                isShow={isShowCartModal}
+                hideModalHandle={this.hideCartModal}
+                navigateToNewOrder={this.navigateToNewOrder}
+            />
         )
     }
 
@@ -318,6 +339,11 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 {/* modal */}
                 {this.renderShopModal()}
                 {this.renderCartModal()}
+                {/* <TouchableOpacity
+                    onPress={this.navigateToPage}
+                >
+                    <Text>to NewOrder</Text>
+                </TouchableOpacity> */}
             </View>
         )
     }

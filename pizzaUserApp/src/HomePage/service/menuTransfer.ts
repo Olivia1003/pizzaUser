@@ -1,4 +1,3 @@
-import { func } from "prop-types";
 
 // 首页菜单
 export function transferMenuData(serverData) {
