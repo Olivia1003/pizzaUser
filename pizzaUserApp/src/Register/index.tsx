@@ -10,9 +10,7 @@ import {
     Text, TouchableOpacity,
     View
 } from 'react-native';
-import TopHeader from '../common/component/TopHeader'
-import { cartMock } from "../common/mock/cartMock"
-import { Button, Icon } from "react-native-elements"
+import { Input, Icon } from "react-native-elements"
 
 
 const MOCK = true;
@@ -35,8 +33,35 @@ export default class Register extends React.Component<IProps, IState> {
     render() {
         return (
             <View>
-                <Text>Register</Text>
-
+                <View>
+                    <Text>Register</Text>
+                </View>
+                <View style={styles.contianer}>
+                    <View style={styles.row}>
+                        <Input style={styles.input}
+                            placeholder='User Name'
+                            leftIcon={
+                                <Icon name="person" />
+                            }
+                        />
+                    </View>
+                    <View style={styles.row}>
+                        <Input style={styles.input}
+                            placeholder='Phone'
+                            leftIcon={
+                                <Icon name="call" />
+                            }
+                        />
+                    </View>
+                    <View style={styles.row}>
+                        <Input style={styles.input}
+                            placeholder='Varify Code'
+                            leftIcon={
+                                <Icon name="cloud" />
+                            }
+                        />
+                    </View>
+                </View>
 
             </View>
         )
@@ -45,5 +70,14 @@ export default class Register extends React.Component<IProps, IState> {
 }
 
 const styles = StyleSheet.create({
+    row:{
+        width: '80%',
+        justifyContent: 'center'
+    },
+    input:{
 
+    },
+    contianer:{
+
+    }
 })
