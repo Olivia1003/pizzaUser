@@ -11,10 +11,12 @@ import {
     View,
     TouchableOpacity,
 } from 'react-native';
-import { Icon, Button } from 'react-native-elements';
+
 import Toast from 'react-native-root-toast'
 
 // component
+import { Icon, Button } from 'react-native-elements'
+import Swiper from 'react-native-swiper'
 import TopHeader from '../common/component/TopHeader'
 import MySearchBar from './components/MySearchBar'
 import MenuItem from './components/MenuItem'
@@ -67,9 +69,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.sortMenuByPrice = this.sortMenuByPrice.bind(this)
 
         // temp
-        // setTimeout(() => {
-        //     this.showCartModal()
-        // }, 100);
+        setTimeout(() => {
+            // this.showCartModal()
+            // this.navigateToPage('NewOrder')
+        }, 100);
 
     }
 
@@ -179,6 +182,23 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.setState({
             isShowCartModal: false
         })
+    }
+
+    private renderSwiper() {
+        return (
+            <View></View>
+            // <Swiper style={styles.wrapper}>
+            //     <View style={styles.slide1}>
+            //         <Text style={styles.text}>Hello Swiper</Text>
+            //     </View>
+            //     <View style={styles.slide2}>
+            //         <Text style={styles.text}>Beautiful</Text>
+            //     </View>
+            //     <View style={styles.slide3}>
+            //         <Text style={styles.text}>And simple</Text>
+            //     </View>
+            // </Swiper>
+        )
     }
 
     // 地址modal
@@ -331,6 +351,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
         return (
             <View style={styles.container}>
                 <TopHeader title={'首页'} />
+                {this.renderSwiper()}
                 <MySearchBar />
                 {this.renderSortBar()}
                 {this.renderShopBar()}
@@ -425,5 +446,31 @@ const styles = StyleSheet.create({
     },
     shopAddrTxt: {
         fontSize: 14
+    },
+    // swiper
+    wrapper: {
+    },
+    slide1: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#9DD6EB',
+    },
+    slide2: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#97CAE5',
+    },
+    slide3: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#92BBD9',
+    },
+    text: {
+        color: '#fff',
+        fontSize: 30,
+        fontWeight: 'bold',
     }
 });
