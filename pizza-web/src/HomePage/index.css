@@ -2,8 +2,15 @@
     background-color: #ccc;
 }
 
+.cart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* menuList */
 .menuList {
+    width: 80%;
     display: flex;
     flex-direction: row;
     justify-content: space-around;

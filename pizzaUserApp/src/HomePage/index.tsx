@@ -67,9 +67,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.sortMenuByPrice = this.sortMenuByPrice.bind(this)
 
         // temp
-        setTimeout(() => {
-            this.showCartModal()
-        }, 100);
+        // setTimeout(() => {
+        //     this.showCartModal()
+        // }, 100);
 
     }
 
@@ -339,11 +339,27 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 {/* modal */}
                 {this.renderShopModal()}
                 {this.renderCartModal()}
-                {/* <TouchableOpacity
-                    onPress={this.navigateToPage}
+                <TouchableOpacity
+                    onPress={() => {
+                        this.navigateToPage('NewOrder')
+                    }}
                 >
                     <Text>to NewOrder</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        this.navigateToPage('Login')
+                    }}
+                >
+                    <Text>to Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        this.navigateToPage('Register')
+                    }}
+                >
+                    <Text>to Register</Text>
+                </TouchableOpacity>
             </View>
         )
     }

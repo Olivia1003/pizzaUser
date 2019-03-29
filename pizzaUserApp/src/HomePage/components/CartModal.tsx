@@ -23,6 +23,9 @@ import { cartSetItemType } from '../../common/dataModal/cart'
 // server
 import { transferCartData } from '../service/menuTransfer'
 
+// Global
+import { getGlobal } from '../../common/Global'
+
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const FADE_TIME = 700
@@ -120,7 +123,8 @@ export default class CartModal extends React.Component<IProps, IState> {
     }
 
     private submitCartOrder() {
-        console.log('submitCartOrder')
+        const userId = getGlobal('userId')
+        console.log('submitCartOrder', userId)
         const { navigateToNewOrder } = this.props
         if (navigateToNewOrder && typeof navigateToNewOrder === 'function') {
             navigateToNewOrder('NewOrder')

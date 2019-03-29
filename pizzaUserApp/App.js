@@ -18,6 +18,8 @@ import MyPage from './dest/MyPage/index'
 // other page
 import NewOrder from './dest/NewOrder/index'
 import PayOver from './dest/PayOver/index'
+import Login from './dest/Login/index'
+import Register from './dest/Register/index'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -101,6 +103,18 @@ const stackNavigator = createStackNavigator({
     screen: PayOver,
     navigationOptions: () => ({
       header: null
+    }),
+  },
+  Login: {
+    screen: Login,
+    navigationOptions: () => ({
+      title: '登录'
+    }),
+  },
+  Register: {
+    screen: Register,
+    navigationOptions: () => ({
+      title: '注册'
     }),
   }
 })

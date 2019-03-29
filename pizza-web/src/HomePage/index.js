@@ -181,7 +181,9 @@ export default class HomePage extends Component {
                     <TopHeader />
                 </Header>
                 <Content>
-                    {this.renderMenuList()}
+                    <div className="cart-container">
+                        {this.renderMenuList()}
+                    </div>
                 </Content>
                 <Footer>Footer</Footer>
             </Layout>
