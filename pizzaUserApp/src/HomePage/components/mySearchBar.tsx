@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         width: '29%',
         paddingLeft: 10,
         paddingRight: 10,
-        height: 40
+        height: 38
     },
     searchBtn: {
         // width: '90%',

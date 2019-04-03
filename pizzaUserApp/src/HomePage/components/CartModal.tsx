@@ -26,6 +26,9 @@ import { transferCartData } from '../service/menuTransfer'
 // Global
 import { getGlobal } from '../../common/Global'
 
+// util
+import { calculatePrice } from '../../common/utils/priceCal'
+
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const FADE_TIME = 700
@@ -75,13 +78,18 @@ export default class CartModal extends React.Component<IProps, IState> {
         }
     }
 
+    private calculateCartPrice() {
+        console.log('calculateCartPrice', this.state.cartSetData)
+        // calculatePrice()
+    }
+
     private addCartItemCount(proId: number) {
         const { cartSetData } = this.state
-        console.log('addCartItemCount', cartSetData, proId)
         if (cartSetData && cartSetData.cartItemList) {
             let newCartList = JSON.parse(JSON.stringify(cartSetData.cartItemList))
             newCartList.forEach((mItem: MenuItemDataType) => {
                 if (mItem.proId === proId) {
+                    console.log('addCartItemCount', mItem)
                     if (mItem.selectCount < mItem.stock) {
                         mItem.selectCount++
                     } else {
@@ -92,8 +100,10 @@ export default class CartModal extends React.Component<IProps, IState> {
             const newCartSetData = {
                 cartItemList: newCartList
             }
+            const newTotalPrice = calculatePrice(newCartList || [])
             this.setState({
-                cartSetData: newCartSetData
+                cartSetData: newCartSetData,
+                totalPrice: newTotalPrice
             })
         }
     }
@@ -116,8 +126,10 @@ export default class CartModal extends React.Component<IProps, IState> {
             const newCartSetData = {
                 cartItemList: newCartList
             }
+            const newTotalPrice = calculatePrice(newCartList || [])
             this.setState({
-                cartSetData: newCartSetData
+                cartSetData: newCartSetData,
+                totalPrice: newTotalPrice
             })
         }
     }
@@ -253,7 +265,7 @@ const styles = StyleSheet.create({
     },
     priceTxt: {
         fontSize: 20,
-        color: '#333'
+        color: '#FF7F50'
     },
     submitBtn: {
         // position: 'absolute',

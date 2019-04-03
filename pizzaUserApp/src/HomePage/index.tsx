@@ -10,6 +10,7 @@ import {
     Text,
     View,
     TouchableOpacity,
+    ScrollView
 } from 'react-native';
 
 import Toast from 'react-native-root-toast'
@@ -71,7 +72,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
         // temp
         setTimeout(() => {
             // this.showCartModal()
-            // this.navigateToPage('NewOrder')
+            this.navigateToPage('NewOrder')
         }, 100);
 
     }
@@ -186,17 +187,19 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     private renderSwiper() {
         return (
-            <Swiper style={styles.wrapper}>
-                <View style={styles.slide1}>
-                    <Text style={styles.text}>Hello Swiper</Text>
-                </View>
-                <View style={styles.slide2}>
-                    <Text style={styles.text}>Beautiful</Text>
-                </View>
-                <View style={styles.slide3}>
-                    <Text style={styles.text}>And simple</Text>
-                </View>
-            </Swiper>
+            <View style={styles.sliderWrap}>
+                <Swiper>
+                    <View style={styles.slide1}>
+                        <Text style={styles.text}>Hello Swiper</Text>
+                    </View>
+                    <View style={styles.slide2}>
+                        <Text style={styles.text}>Beautiful</Text>
+                    </View>
+                    <View style={styles.slide3}>
+                        <Text style={styles.text}>And simple</Text>
+                    </View>
+                </Swiper>
+            </View>
         )
     }
 
@@ -241,7 +244,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                         reverse
                         size={15}
                         name={priceIconName}
-                        color='#00aced'
+                        color='#97CAE5'
                     />
                 </TouchableOpacity>
                 {/* 销量 */}
@@ -254,7 +257,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                         reverse
                         size={15}
                         name={saleIconName}
-                        color='#00aced'
+                        color='#97CAE5'
                     />
                 </TouchableOpacity>
                 {/* 刷新 */}
@@ -268,7 +271,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
             <TouchableOpacity
                 style={styles.shopBar}
                 onPress={this.showShopModal}
-                activeOpacity={1.0}
+                activeOpacity={0.7}
             >
                 <Icon
                     // reverse
@@ -277,10 +280,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
                     color='#00aced'
                 />
                 <View style={styles.shopName}>
-                    <Text style={styles.shopNameTxt}>name</Text>
+                    <Text style={styles.shopNameTxt}>披萨店A</Text>
                 </View>
                 <View style={styles.shopAddr}>
-                    <Text style={styles.shopAddrTxt}>address</Text>
+                    <Text style={styles.shopAddrTxt}>金沙江路123号</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -338,9 +341,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
         })
 
         return (
-            <View style={styles.menuList}>
+            <ScrollView style={styles.menuList}>
                 {menuListView}
-            </View>
+            </ScrollView>
         )
     }
 
@@ -351,9 +354,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
             <View style={styles.container}>
                 <TopHeader title={'首页'} />
                 {this.renderSwiper()}
+                {this.renderShopBar()}
                 <MySearchBar />
                 {this.renderSortBar()}
-                {this.renderShopBar()}
                 {this.renderMenuList()}
                 {this.renderCartEntry()}
                 {/* modal */}
@@ -393,7 +396,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'rgba(0,0,0,0.5)'
     },
     menuList: {
-        padding: 10,
+        paddingHorizontal: 10,
     },
     cartEntryWrap: {
         position: 'absolute',
@@ -402,16 +405,18 @@ const styles = StyleSheet.create({
     },
     freshBtnWrap: {
         position: 'absolute',
-        top: 10,
+        top: 5,
         right: 15
     },
     // sortBar
     sortBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#00aced',
-        height: 40,
+        backgroundColor: '#97CAE5',
+        // backgroundColor: 'rgba(29,173,234,0.3)',
+        height: 30,
         paddingHorizontal: 10,
+        overflow: 'hidden'
     },
     priceSortBtn: {
         marginRight: 10,
@@ -420,7 +425,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#00aced',
+        backgroundColor: 'transparent',
         // borderRadius: 5,
     },
     sortPriceTxt: {
@@ -430,7 +435,7 @@ const styles = StyleSheet.create({
     // shopBar
     shopBar: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         paddingHorizontal: 10,
         paddingVertical: 5,
     },
@@ -438,18 +443,20 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },
     shopNameTxt: {
+        color: '#333',
         fontSize: 14
     },
     shopAddr: {
         marginLeft: 5
     },
     shopAddrTxt: {
+        color: '#333',
         fontSize: 14
     },
     // swiper
-    wrapper: {
+    sliderWrap: {
         // width:200,
-        // height:200
+        height: 150
     },
     slide1: {
         flex: 1,
