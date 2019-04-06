@@ -5,12 +5,15 @@ import {
     Text,
     View,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from 'react-native'
+
+import Toast from 'react-native-root-toast'
 
 const MOCK = true
 
-import { Overlay } from 'react-native-elements'
+import { Overlay, Button, Icon } from 'react-native-elements'
 import { cartMock } from '../../common/mock/cartMock'
 
 // component
@@ -44,6 +47,7 @@ interface IState {
     // cartSetData: cartSetItemType; // 一个shop的信息，包括购物车list
     cartSetData: any; // 一个shop的信息，包括购物车list
     totalPrice: number;
+    isShowAlert: boolean;
 }
 
 export default class CartModal extends React.Component<IProps, IState> {
@@ -53,8 +57,9 @@ export default class CartModal extends React.Component<IProps, IState> {
             cartSetData: {
                 shopId: '',
                 shopName: '',
-                cartItemList: []
+                cartItemList: [],
             },
+            isShowAlert: false,
             totalPrice: 0
         }
 
@@ -63,8 +68,13 @@ export default class CartModal extends React.Component<IProps, IState> {
         this.submitCartOrder = this.submitCartOrder.bind(this)
     }
 
+    private currentDeleteItemId = -1 // 记录正在删除id
+
     componentDidMount() {
         console.log('CartModal componentDidMount')
+        setTimeout(() => {
+            // this.showAlert()
+        }, 4);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -76,6 +86,20 @@ export default class CartModal extends React.Component<IProps, IState> {
                 totalPrice: this.calculateTotalPrice([])
             })
         }
+    }
+
+    private showAlert() {
+        console.log('showAlert')
+        this.setState({
+            isShowAlert: true
+        })
+    }
+
+    private hideAlert() {
+        console.log('hideAlert')
+        this.setState({
+            isShowAlert: false
+        })
     }
 
     private calculateCartPrice() {
@@ -93,7 +117,11 @@ export default class CartModal extends React.Component<IProps, IState> {
                     if (mItem.selectCount < mItem.stock) {
                         mItem.selectCount++
                     } else {
-                        // Toast.show('不能再增加了')
+                        // Toast.show('不能再增加了', {
+                        //     position: Toast.positions.CENTER,
+                        //     hideOnPress: true,
+                        // })
+                        return
                     }
                 }
             })
@@ -116,10 +144,12 @@ export default class CartModal extends React.Component<IProps, IState> {
             let newCartList = JSON.parse(JSON.stringify(cartSetData.cartItemList))
             newCartList.forEach((mItem: MenuItemDataType) => {
                 if (mItem.proId === proId) {
-                    if (mItem.selectCount > 0) {
+                    if (mItem.selectCount > 1) {
                         mItem.selectCount--
                     } else {
-                        // Toast.show('不能再减少了')
+                        this.currentDeleteItemId = proId
+                        this.showAlert()
+                        return
                     }
                 }
             })
@@ -134,12 +164,21 @@ export default class CartModal extends React.Component<IProps, IState> {
         }
     }
 
+    private deleteItemHandle() {
+        if (this.currentDeleteItemId >= 0) {
+            console.log('deleteItemHandle currentDeleteItemId', this.currentDeleteItemId)
+
+        }
+    }
+
     private submitCartOrder() {
         const userId = getGlobal('userId')
-        console.log('submitCartOrder', userId)
         const { navigateToNewOrder } = this.props
+        const orderParams = {
+            itemList: []
+        }
         if (navigateToNewOrder && typeof navigateToNewOrder === 'function') {
-            navigateToNewOrder('NewOrder')
+            navigateToNewOrder(orderParams)
         }
     }
 
@@ -194,29 +233,118 @@ export default class CartModal extends React.Component<IProps, IState> {
         )
     }
 
-    public render() {
-        const { cartSetData } = this.state
-        console.log('render CartModal', cartSetData)
-        const { isShow, hideModalHandle } = this.props
+    // Alert modal
+    private renderAlert() {
+        console.log('render CartModal alert')
+        const { isShowAlert } = this.state
         return (
-            <Overlay
-                isVisible={isShow}
-                onBackdropPress={() => { hideModalHandle() }}
-                width={SCREEN_WIDTH - 20}
-                height={SCREEN_HEIGHT - 200}
-            >
-                <View style={styles.cartModalWrap}>
-                    {this.renderCartItemList()}
+            <View style={styles.alertWrap}>
+                <Overlay
+                    isVisible={isShowAlert}
+                    onBackdropPress={() => { this.hideAlert() }}
+                    width={SCREEN_WIDTH - 80}
+                    height={120}
+                >
+                    <View style={styles.alertTitle}>
+                        <Text style={styles.alertTitleTxt}>确认删除吗？</Text>
+                    </View>
+                    <View style={styles.alertBtnBar}>
+                        <Button
+                            onPress={() => { this.hideAlert() }}
+                            raised
+                            title="取 消"
+                            type={'outline'}
+                        />
+                        <Button
+                            onPress={() => { this.deleteItemHandle() }}
+                            raised
+                            title="确 认"
+                        />
+                    </View>
+                </Overlay>
+            </View>
+        )
+    }
+
+    private renderModalHeader() {
+        const { hideModalHandle } = this.props
+        return (
+            <View style={styles.modalHeader}>
+                <Text style={styles.headerTitle}>购 物 车</Text>
+                <TouchableOpacity
+                    style={styles.closeBtn}
+                    onPress={() => { hideModalHandle() }}
+                    activeOpacity={0.7}
+                >
+                    <Icon
+                        raised
+                        name="close"
+                        size={12}
+                        color="#00aced"
+                    />
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
+    private renderContent() {
+        const { cartSetData } = this.state
+        const { isShow, hideModalHandle } = this.props
+        console.log('render CartModal content', cartSetData)
+
+        return (
+            <View style={styles.cartModalWrap}>
+                <Overlay
+                    isVisible={isShow}
+                    onBackdropPress={() => { hideModalHandle() }}
+                    width={SCREEN_WIDTH - 20}
+                    height={SCREEN_HEIGHT - 200}
+                    overlayBackgroundColor={'#eee'}
+                >
+                    {this.renderModalHeader()}
+                    <ScrollView style={styles.cartModalContent}>
+                        {this.renderCartItemList()}
+                    </ScrollView>
                     {this.renderTotalPriceBar()}
-                </View>
-            </Overlay>
+                    {this.renderAlert()}
+                </Overlay>
+            </View>
+        )
+    }
+
+    public render() {
+        return (
+            <View>
+                {this.renderContent()}
+            </View>
+
         )
     }
 }
 
 const styles = StyleSheet.create({
+    headerTitle: {
+        fontSize: 18,
+        color: '#333'
+    },
+    modalHeader: {
+        height: 30,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    closeBtn: {
+        position: 'absolute',
+        right: -5,
+        top: -7,
+        margin: 0
+    },
     cartModalWrap: {
+        // zIndex: 100
+    },
+    cartModalContent: {
         flex: 1,
+        // marginTop: 5
         // backgroundColor: '#eee'
     },
     // cartItemWrap: {
@@ -281,5 +409,24 @@ const styles = StyleSheet.create({
     submitBtnTxt: {
         fontSize: 20,
         color: '#fff'
-    }
+    },
+    // alert modal
+    alertWrap: {
+        alignItems: 'center',
+        flexDirection: 'column'
+    },
+    alertTitle: {
+        marginTop: 15,
+        marginLeft: 10,
+    },
+    alertTitleTxt: {
+        fontSize: 18,
+        color: '#333',
+        textAlign: 'center'
+    },
+    alertBtnBar: {
+        marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-around'
+    },
 });

@@ -20,6 +20,7 @@ import { userMock } from '../common/mock/userMock'
 const MOCK = true;
 interface IProps {
     // data: any;
+    navigation: any;
 }
 
 interface IState {
@@ -31,6 +32,20 @@ export default class NewOrder extends React.Component<IProps, IState> {
         this.state = {
             // cartTotalList: []
         };
+    }
+
+    private navigateToPage(pageName: string, params: any = {}) {
+        console.log('navigateToPage---', pageName)
+        if (this.props.navigation && typeof this.props.navigation.navigate === 'function') {
+            this.props.navigation.navigate(pageName, params)
+        }
+    }
+
+    private commitPay() {
+        console.log('确认支付')
+        setTimeout(() => {
+            this.navigateToPage('PayOver')
+        }, 100);
     }
 
     private renderShopAddress() {
@@ -54,12 +69,11 @@ export default class NewOrder extends React.Component<IProps, IState> {
         )
     }
 
-
-    private renderNewOrderItem(orderItem) {
+    private renderNewOrderItem(orderItem, index) {
         const { name, selectCount, price } = orderItem
 
         return (
-            <View style={styles.itemCard}>
+            <View style={styles.itemCard} key={`new-order-item-${index}`}>
                 <View style={styles.itemName}>
                     <Text style={styles.itemNameText}>{name}</Text>
                 </View>
@@ -90,8 +104,8 @@ export default class NewOrder extends React.Component<IProps, IState> {
         return (
             <View style={styles.orderCard}>
                 {
-                    tempList.map((oItem) => {
-                        return this.renderNewOrderItem(oItem)
+                    tempList.map((oItem, index) => {
+                        return this.renderNewOrderItem(oItem, index)
                     })
                 }
                 {this.renderPriceBar()}
@@ -142,9 +156,9 @@ export default class NewOrder extends React.Component<IProps, IState> {
         return (
             <View style={styles.commitBtn}>
                 <Button
+                    onPress={() => { this.commitPay() }}
                     raised
                     title="确认支付"
-                // type="outline"
                 />
             </View>
         )
@@ -174,9 +188,10 @@ const shadow = {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         paddingHorizontal: 20,
-        paddingVertical: 5,
-        backgroundColor: '#fff'
+        paddingVertical: 15,
+        backgroundColor: '#eee'
     },
     orderCard: {
         flexDirection: 'column',
@@ -252,6 +267,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         paddingHorizontal: 10,
         paddingVertical: 5,
+        marginBottom: 15,
     },
     shopName: {
         marginLeft: 5
@@ -284,7 +300,7 @@ const styles = StyleSheet.create({
     // userInfoBar
     userInfoBar: {
         flexDirection: 'column',
-        marginTop: 60,
+        marginTop: 20,
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 5,

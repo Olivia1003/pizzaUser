@@ -72,7 +72,8 @@ export default class MenuPage extends React.Component<IProps, IState> {
         // temp
         setTimeout(() => {
             // this.showCartModal()
-            this.navigateToPage('NewOrder')
+            // this.navigateToPage('NewOrder')
+            // this.navigateToPage('PayOver')
         }, 100);
 
     }
@@ -88,19 +89,20 @@ export default class MenuPage extends React.Component<IProps, IState> {
         })
     }
 
-    private navigateToPage(pageName: string) {
+    private navigateToPage(pageName: string, params: any = {}) {
         console.log('navigateToPage---', pageName)
-        this.props.navigation.navigate(pageName)
+        if (this.props.navigation && typeof this.props.navigation.navigate === 'function') {
+            this.props.navigation.navigate(pageName, params)
+        }
     }
 
-    private navigateToNewOrder() {
-        console.log('navigateToNewOrder')
+    private navigateToNewOrder(orderParams) {
+        console.log('新增订单', orderParams)
         const _this = this
         this.setState({
             isShowCartModal: false
         }, () => {
-            console.log('navigateToNewOrder dismiss over')
-            _this.props.navigation.navigate('NewOrder')
+            _this.navigateToPage('NewOrder', orderParams)
         })
     }
 
@@ -113,7 +115,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 if (mItem.selectCount < mItem.stock) {
                     mItem.selectCount++
                 } else {
-                    // Toast.show('不能再增加了')
+                    Toast.show('不能再增加了', {
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    })
                 }
             }
         })
@@ -131,7 +136,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 if (mItem.selectCount) {
                     mItem.selectCount--
                 } else {
-                    // Toast.show('不能再减少了')
+                    Toast.show('不能再减少了', {
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    })
                 }
             }
         })

@@ -190,7 +190,9 @@ const styles = StyleSheet.create({
         width: '30%'
     },
     itemPrice: {
-        width: '30%'
+        width: '30%',
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     itemNameText: {
         fontSize: 20
