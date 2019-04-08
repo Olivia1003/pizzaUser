@@ -17,7 +17,6 @@ interface IProps {
 }
 export default class RootPage extends React.Component<IProps> {
     render() {
-        console.log('render RootPage')
         return (
             <View>
                 <HomePage />

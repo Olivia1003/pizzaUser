@@ -29,7 +29,7 @@ instance.interceptors.response.use(function (response) {
 
 export const Request = async (api, params, method) => {
     return new Promise((resolve, reject) => {
-        if (method == 'post'){
+        if (method == 'post') {
             instance.post(api, params)
                 .then(res => {
                     resolve(res.data)
@@ -37,7 +37,7 @@ export const Request = async (api, params, method) => {
                 .catch(error => {
                     reject(error)
                 })
-        } else if(method == 'get'){
+        } else if (method == 'get') {
             instance.get(api, params)
                 .then(res => {
                     resolve(res.data)
@@ -45,7 +45,7 @@ export const Request = async (api, params, method) => {
                 .catch(error => {
                     reject(error)
                 })
-        } else if(method == 'put'){
+        } else if (method == 'put') {
             instance.put(api, params)
                 .then(res => {
                     resolve(res.data)

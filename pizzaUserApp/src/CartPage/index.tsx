@@ -155,7 +155,6 @@ export default class CartPage extends React.Component<IProps, IState> {
 
     private renderCartList() {
         const { cartTotalList } = this.state
-        console.log('renderCartList total', cartTotalList)
         if (cartTotalList) {
             const cartListView = cartTotalList.map((cartItem, index) => {
                 return (

@@ -39,7 +39,6 @@ export default class MySearchBar extends React.Component<IProps, IState> {
     }
 
     public render() {
-        console.log('render MySearchBar')
         const { searchValue } = this.state
         const searchIcon = (
             <Icon

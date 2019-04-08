@@ -9,7 +9,7 @@ import {
     ScrollView
 } from 'react-native'
 
-import Toast from 'react-native-root-toast'
+import { showToast } from '../../common/utils/Toast'
 
 const MOCK = true
 
@@ -25,6 +25,7 @@ import { cartSetItemType } from '../../common/dataModal/cart'
 
 // server
 import { transferCartData } from '../service/menuTransfer'
+import { serverIns } from '../../common/utils/serverRequest'
 
 // Global
 import { getGlobal } from '../../common/Global'
@@ -81,10 +82,33 @@ export default class CartModal extends React.Component<IProps, IState> {
         console.log('componentWillReceiveProps', nextProps)
         if (nextProps.isShow) {
             // 请求服务
+            this.fetchCartData()
+        }
+    }
+
+    private fetchCartData() {
+        if (MOCK) {
+            const cartSetData = transferCartData(cartMock.carts[0])
             this.setState({
-                cartSetData: MOCK ? transferCartData(cartMock.carts[0]) : [],
-                totalPrice: this.calculateTotalPrice([])
+                cartSetData,
+                totalPrice: calculatePrice(cartSetData.cartItemList || [])
             })
+        } else {
+            const shopId = 2
+            serverIns.get(`/cart/showCart?shopId=${shopId}`)
+                .then((res) => {
+                    console.log('fetchCartData success', res)
+                    showToast('fetchCartData success')
+                    if (res && res.data && res.data.model) {
+                        this.setState({
+                            cartSetData: transferCartData(res.data.model),
+                            totalPrice: calculatePrice(res.data.model.items)
+                        })
+                    }
+                }, (err) => {
+                    console.log('fetchCartData fail', err)
+                    showToast('fetchCartData fail')
+                })
         }
     }
 
@@ -100,11 +124,6 @@ export default class CartModal extends React.Component<IProps, IState> {
         this.setState({
             isShowAlert: false
         })
-    }
-
-    private calculateCartPrice() {
-        console.log('calculateCartPrice', this.state.cartSetData)
-        // calculatePrice()
     }
 
     private addCartItemCount(proId: number) {
@@ -182,35 +201,35 @@ export default class CartModal extends React.Component<IProps, IState> {
         }
     }
 
-    private calculateTotalPrice(cartList) {
-        return 100
-    }
-
     private renderCartItemList() {
         const { cartSetData } = this.state
-        console.log('renderCartItemList', cartSetData)
-        if (cartSetData && cartSetData.cartItemList) {
-            const cartListView = cartSetData.cartItemList.map((pItem, index) => {
-                if (pItem) {
-                    return (
-                        <MenuItem
-                            key={`cartItem-${index}`}
-                            itemData={pItem}
-                            isShowDetail={false}
-                            isShowStock={false}
-                            addCount={this.addCartItemCount}
-                            deleteCount={this.deleteCartItemCount}
-                        />
-                    )
-                }
-            })
+        if (cartSetData && cartSetData.cartItemList && cartSetData.cartItemList.length > 0) {
             return (
                 <View>
-                    {cartListView}
+                    {
+                        cartSetData.cartItemList.map((pItem, index) => {
+                            if (pItem) {
+                                return (
+                                    <MenuItem
+                                        key={`cartItem-${index}`}
+                                        itemData={pItem}
+                                        isShowDetail={false}
+                                        isShowStock={false}
+                                        addCount={this.addCartItemCount}
+                                        deleteCount={this.deleteCartItemCount}
+                                    />
+                                )
+                            }
+                        })
+                    }
                 </View>
             )
         } else {
-            return (<View />)
+            return (
+                <View style={styles.blankWrap}>
+                    <Text style={styles.blankTxt}>啥也没有~</Text>
+                </View>
+            )
         }
     }
 
@@ -235,7 +254,6 @@ export default class CartModal extends React.Component<IProps, IState> {
 
     // Alert modal
     private renderAlert() {
-        console.log('render CartModal alert')
         const { isShowAlert } = this.state
         return (
             <View style={styles.alertWrap}>
@@ -290,7 +308,6 @@ export default class CartModal extends React.Component<IProps, IState> {
     private renderContent() {
         const { cartSetData } = this.state
         const { isShow, hideModalHandle } = this.props
-        console.log('render CartModal content', cartSetData)
 
         return (
             <View style={styles.cartModalWrap}>
@@ -429,4 +446,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around'
     },
+    // blank
+    blankWrap: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 10
+    },
+    blankTxt: {
+        fontSize: 15,
+        color: '#777',
+        textAlign: 'center'
+    }
 });

@@ -124,7 +124,6 @@ export default class NewOrder extends React.Component<IProps, IState> {
     }
 
     private renderUserInfo() {
-        console.log('renderUserInfo', userMock)
         const userData = userMock.user
 
         if (!userData || !userData.address) {

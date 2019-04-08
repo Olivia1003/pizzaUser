@@ -147,7 +147,6 @@ export default class OrderPage extends React.Component<IProps, IState> {
 
     // 地址modal
     private renderMapModal() {
-        console.log('renderMapModal')
         const { isShowMapModal } = this.state
         return (
             <MapModal isShow={isShowMapModal} hideModalHandle={this.hideMapModal} />

@@ -12,9 +12,8 @@ import {
     TouchableOpacity,
     ScrollView
 } from 'react-native';
-
-import Toast from 'react-native-root-toast'
-
+import axios from 'axios'
+import { showToast } from '../common/utils/Toast'
 // component
 import { Icon, Button } from 'react-native-elements'
 import Swiper from 'react-native-swiper'
@@ -27,10 +26,11 @@ import CartModal from './components/CartModal'
 // mock
 import { menuMock } from '../common/mock/menuMock'
 import { cartMock } from '../common/mock/cartMock'
-const MOCK = true
+const MOCK = false
 
 // service
 import { transferMenuData, transferCartData } from './service/menuTransfer'
+import { serverIns } from '../common/utils/serverRequest'
 
 // interface
 import { MenuItemDataType } from '../common/dataModal/menuItem'
@@ -44,6 +44,7 @@ interface IState {
     isShowShopModal: boolean;
     isShowCartModal: boolean;
     menuList: MenuItemDataType[];
+    selectShop: any;
     priceSortUp: boolean; // 是否价格升序排序
     // cartList: any;
 }
@@ -55,6 +56,11 @@ export default class MenuPage extends React.Component<IProps, IState> {
             isShowShopModal: false,
             isShowCartModal: false,
             menuList: [],
+            selectShop: {
+                shopId: '2',
+                shopName: '披萨店ABC',
+                posString: '金沙江路123号'
+            },
             priceSortUp: false
             // cartList: MOCK ? transferCartData(cartMock) : [],
         }
@@ -80,13 +86,45 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     public componentDidMount() {
         this.fetchMenuListData()
+        this.checkLogin()
     }
 
-    private fetchMenuListData() {
-        console.log('fetchMenuListData')
-        this.setState({
-            menuList: MOCK ? transferMenuData(menuMock.menu.items) : [],
+    private checkLogin() {
+        serverIns.post('/user/login', {
+            nickName: "Young",
+            password: "123"
+        }).then((res) => {
+            console.log('checkLogin success', res)
+            showToast('登录成功')
+        }, (err) => {
+            console.log('checkLogin fail', err)
+            showToast('登录失败')
         })
+    }
+
+    private async fetchMenuListData() {
+        if (MOCK) {
+            this.setState({
+                menuList: transferMenuData(menuMock.menu.items)
+            })
+        } else {
+            serverIns.post('/menu/showMenu', {
+                menuId: "",
+                shop: {
+                    shopId: "2"
+                }
+            }).then(
+                (res) => {
+                    console.log('fetchMenuListData success', res, res.data.model.items)
+                    if (res && res.data && res.data.model && res.data.model.items) {
+                        this.setState({
+                            menuList: transferMenuData(res.data.model.items)
+                        })
+                    }
+                }, (err) => {
+                    console.log('fetchMenuListData error', err)
+                })
+        }
     }
 
     private navigateToPage(pageName: string, params: any = {}) {
@@ -106,6 +144,45 @@ export default class MenuPage extends React.Component<IProps, IState> {
         })
     }
 
+    // 请求服务，改变server购物车
+    private serverChangeCart() {
+        const { selectShop, menuList } = this.state
+        if (selectShop && selectShop.shopId && menuList) {
+            const shopId = selectShop.shopId
+            const items = menuList.map((mItem) => {
+                return {
+                    item: {
+                        itemId: mItem.proId
+                    },
+                    count: mItem.selectCount
+                }
+            })
+            console.log('serverChangeCart request', {
+                shop: {
+                    shopId
+                },
+                items
+            })
+            serverIns.post('/menu/showMenu', {
+                shop: {
+                    shopId
+                },
+                items
+            }).then(
+                (res) => {
+                    console.log('serverChangeCart success', res)
+                    if ((res.data && res.data.status || '') === '200') {
+                        showToast('添加成功')
+                    } else {
+                        showToast('添加失败')
+                    }
+                }, (err) => {
+                    console.log('serverChangeCart error', err)
+                })
+        }
+
+    }
+
     private addMenuItemCount(proId: number) {
         console.log('addMenuItemCount', proId)
         const { menuList } = this.state
@@ -115,15 +192,15 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 if (mItem.selectCount < mItem.stock) {
                     mItem.selectCount++
                 } else {
-                    Toast.show('不能再增加了', {
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    })
+                    showToast('不能再增加了')
+                    return
                 }
             }
         })
         this.setState({
             menuList: newMenuList
+        }, () => {
+            this.serverChangeCart()
         })
     }
 
@@ -136,15 +213,15 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 if (mItem.selectCount) {
                     mItem.selectCount--
                 } else {
-                    Toast.show('不能再减少了', {
-                        position: Toast.positions.CENTER,
-                        hideOnPress: true,
-                    })
+                    showToast('不能再减少了')
+                    return
                 }
             }
         })
         this.setState({
             menuList: newMenuList
+        }, () => {
+            this.serverChangeCart()
         })
     }
 
@@ -213,7 +290,6 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     // 地址modal
     private renderShopModal() {
-        console.log('renderShopModal')
         const { isShowShopModal } = this.state
         return (
             <ShopModal isShow={isShowShopModal} hideModalHandle={this.hideShopModal} />
@@ -222,7 +298,6 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     // 购物车modal
     private renderCartModal() {
-        console.log('renderCartModal')
         const { isShowCartModal } = this.state
         return (
             <CartModal
@@ -275,6 +350,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
     }
 
     private renderShopBar() {
+        const { selectShop } = this.state
+        const shopName = selectShop && selectShop.shopName || ''
+        const shopAddress = selectShop && selectShop.posString || ''
         return (
             <TouchableOpacity
                 style={styles.shopBar}
@@ -288,10 +366,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
                     color='#00aced'
                 />
                 <View style={styles.shopName}>
-                    <Text style={styles.shopNameTxt}>披萨店A</Text>
+                    <Text style={styles.shopNameTxt}>{shopName}</Text>
                 </View>
                 <View style={styles.shopAddr}>
-                    <Text style={styles.shopAddrTxt}>金沙江路123号</Text>
+                    <Text style={styles.shopAddrTxt}>{shopAddress}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -333,7 +411,6 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     private renderMenuList() {
         const { menuList } = this.state
-        // console.log('renderMenuList', menuList)
 
         const menuListView = menuList.map((mItem, index) => {
             return (
@@ -356,7 +433,6 @@ export default class MenuPage extends React.Component<IProps, IState> {
     }
 
     public render() {
-        console.log('render homePage')
 
         return (
             <View style={styles.container}>

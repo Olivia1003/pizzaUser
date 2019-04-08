@@ -1,7 +1,14 @@
 const menuMock = {
     menu: {
         menuId: '2',
-        shopId: '1',
+        shopId: {
+            shopId: 2,
+            shopName: null,
+            posX: null,
+            posY: null,
+            posString: null,
+            picUrl: null
+        },
         items: [
             {
                 item: {
@@ -9,7 +16,7 @@ const menuMock = {
                     itemName: '吮指原味鸡111',
                     price: '22',
                     picUrl: '',
-                    size: '13',
+                    pizzaSize: '13',
                     description: 'detail',
                     state: '',
                 },
