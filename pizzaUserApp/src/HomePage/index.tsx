@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import axios from 'axios'
 import { showToast } from '../common/utils/Toast'
+
 // component
 import { Icon, Button } from 'react-native-elements'
 import Swiper from 'react-native-swiper'
@@ -26,7 +27,7 @@ import CartModal from './components/CartModal'
 // mock
 import { menuMock } from '../common/mock/menuMock'
 import { cartMock } from '../common/mock/cartMock'
-const MOCK = false
+const MOCK = true
 
 // service
 import { transferMenuData, transferCartData } from './service/menuTransfer'
@@ -34,6 +35,7 @@ import { serverIns } from '../common/utils/serverRequest'
 
 // interface
 import { MenuItemDataType } from '../common/dataModal/menuItem'
+import { cartSetItemType } from '../common/dataModal/cart'
 interface IProps {
     // data: any;
     navigation: any;
@@ -43,10 +45,16 @@ interface IState {
     searchValue: string;
     isShowShopModal: boolean;
     isShowCartModal: boolean;
-    menuList: MenuItemDataType[];
-    selectShop: any;
     priceSortUp: boolean; // 是否价格升序排序
-    // cartList: any;
+    // data
+    menuList: MenuItemDataType[];
+    // cartSetData: {
+    //     shopId: number,
+    //     shopName: string,
+    //     cartItemList: MenuItemDataType[],
+    // }; // 当前shop的购物车list
+    cartItemList: MenuItemDataType[]; // 当前shop的购物车list
+    selectShop: any;
 }
 export default class MenuPage extends React.Component<IProps, IState> {
     constructor(props) {
@@ -56,13 +64,18 @@ export default class MenuPage extends React.Component<IProps, IState> {
             isShowShopModal: false,
             isShowCartModal: false,
             menuList: [],
+            // cartSetData: {
+            //     shopId: '',
+            //     shopName: '',
+            //     cartItemList: [],
+            // },
+            cartItemList: [],
             selectShop: {
                 shopId: '2',
                 shopName: '披萨店ABC',
                 posString: '金沙江路123号'
             },
             priceSortUp: false
-            // cartList: MOCK ? transferCartData(cartMock) : [],
         }
         this.navigateToPage = this.navigateToPage.bind(this)
         this.navigateToNewOrder = this.navigateToNewOrder.bind(this)
@@ -71,8 +84,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
         this.showCartModal = this.showCartModal.bind(this)
         this.hideCartModal = this.hideCartModal.bind(this)
 
-        this.addMenuItemCount = this.addMenuItemCount.bind(this)
-        this.deleteMenuItemCount = this.deleteMenuItemCount.bind(this)
+        // this.addMenuItemCount = this.addMenuItemCount.bind(this)
+        // this.deleteMenuItemCount = this.deleteMenuItemCount.bind(this)
+        this.changeCartCount = this.changeCartCount.bind(this)
         this.sortMenuByPrice = this.sortMenuByPrice.bind(this)
 
         // temp
@@ -85,10 +99,12 @@ export default class MenuPage extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.fetchMenuListData()
         this.checkLogin()
+        this.fetchMenuListData()
+        this.fetchCartData()
     }
 
+    // 服务：登录
     private checkLogin() {
         serverIns.post('/user/login', {
             nickName: "Young",
@@ -102,7 +118,8 @@ export default class MenuPage extends React.Component<IProps, IState> {
         })
     }
 
-    private async fetchMenuListData() {
+    // 服务：获取菜单列表
+    private fetchMenuListData() {
         if (MOCK) {
             this.setState({
                 menuList: transferMenuData(menuMock.menu.items)
@@ -127,29 +144,38 @@ export default class MenuPage extends React.Component<IProps, IState> {
         }
     }
 
-    private navigateToPage(pageName: string, params: any = {}) {
-        console.log('navigateToPage---', pageName)
-        if (this.props.navigation && typeof this.props.navigation.navigate === 'function') {
-            this.props.navigation.navigate(pageName, params)
+    // 服务：获取购物车列表
+    private fetchCartData() {
+        console.log('fetchCartData start')
+        if (MOCK) {
+            const cartSetData = transferCartData(cartMock.carts[0])
+            this.setState({
+                cartItemList: cartSetData.cartItemList
+            })
+        } else {
+            const shopId = 2
+            serverIns.get(`/cart/showCart?shopId=${shopId}`)
+                .then((res) => {
+                    console.log('fetchCartData success', res)
+                    showToast('fetchCartData success')
+                    if (res && res.data && res.data.model) {
+                        this.setState({
+                            cartItemList: transferCartData(res.data.model).cartItemList,
+                        })
+                    }
+                }, (err) => {
+                    console.log('fetchCartData fail', err)
+                    showToast('fetchCartData fail')
+                })
         }
     }
 
-    private navigateToNewOrder(orderParams) {
-        console.log('新增订单', orderParams)
-        const _this = this
-        this.setState({
-            isShowCartModal: false
-        }, () => {
-            _this.navigateToPage('NewOrder', orderParams)
-        })
-    }
-
-    // 请求服务，改变server购物车
+    // 服务：改变server购物车
     private serverChangeCart() {
-        const { selectShop, menuList } = this.state
-        if (selectShop && selectShop.shopId && menuList) {
+        const { selectShop, cartItemList } = this.state
+        if (selectShop && selectShop.shopId && cartItemList) {
             const shopId = selectShop.shopId
-            const items = menuList.map((mItem) => {
+            const items = cartItemList.map((mItem) => {
                 return {
                     item: {
                         itemId: mItem.proId
@@ -157,12 +183,12 @@ export default class MenuPage extends React.Component<IProps, IState> {
                     count: mItem.selectCount
                 }
             })
-            console.log('serverChangeCart request', {
+            console.log('serverChangeCart request', JSON.stringify({
                 shop: {
                     shopId
                 },
                 items
-            })
+            }))
             serverIns.post('/menu/showMenu', {
                 shop: {
                     shopId
@@ -183,46 +209,99 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     }
 
-    private addMenuItemCount(proId: number) {
-        console.log('addMenuItemCount', proId)
-        const { menuList } = this.state
-        let newMenuList = JSON.parse(JSON.stringify(menuList))
-        newMenuList.forEach((mItem: MenuItemDataType) => {
-            if (mItem.proId === proId) {
-                if (mItem.selectCount < mItem.stock) {
-                    mItem.selectCount++
-                } else {
-                    showToast('不能再增加了')
-                    return
-                }
-            }
-        })
+    private navigateToPage(pageName: string, params: any = {}) {
+        console.log('navigateToPage---', pageName)
+        if (this.props.navigation && typeof this.props.navigation.navigate === 'function') {
+            this.props.navigation.navigate(pageName, params)
+        }
+    }
+
+    private navigateToNewOrder(orderParams) {
+        console.log('新增订单', orderParams)
+        const _this = this
         this.setState({
-            menuList: newMenuList
+            isShowCartModal: false
         }, () => {
-            this.serverChangeCart()
+            _this.navigateToPage('NewOrder', orderParams)
         })
     }
 
-    private deleteMenuItemCount(proId: number) {
-        console.log('deleteMenuItemCount', proId)
-        const { menuList } = this.state
-        let newMenuList = JSON.parse(JSON.stringify(menuList))
-        newMenuList.forEach((mItem: MenuItemDataType) => {
-            if (mItem.proId === proId) {
-                if (mItem.selectCount) {
-                    mItem.selectCount--
-                } else {
-                    showToast('不能再减少了')
-                    return
+    // private addMenuItemCount(proId: number) {
+    //     console.log('addMenuItemCount', proId)
+    //     const { menuList } = this.state
+    //     let newMenuList = JSON.parse(JSON.stringify(menuList))
+    //     newMenuList.forEach((mItem: MenuItemDataType) => {
+    //         if (mItem.proId === proId) {
+    //             if (mItem.selectCount < mItem.stock) {
+    //                 mItem.selectCount++
+    //             } else {
+    //                 showToast('不能再增加了')
+    //                 return
+    //             }
+    //         }
+    //     })
+    //     this.setState({
+    //         menuList: newMenuList
+    //     }, () => {
+    //         this.serverChangeCart()
+    //     })
+    // }
+
+    // private deleteMenuItemCount(proId: number) {
+    //     console.log('deleteMenuItemCount', proId)
+    //     const { menuList } = this.state
+    //     let newMenuList = JSON.parse(JSON.stringify(menuList))
+    //     newMenuList.forEach((mItem: MenuItemDataType) => {
+    //         if (mItem.proId === proId) {
+    //             if (mItem.selectCount) {
+    //                 mItem.selectCount--
+    //             } else {
+    //                 showToast('不能再减少了')
+    //                 return
+    //             }
+    //         }
+    //     })
+    //     this.setState({
+    //         menuList: newMenuList
+    //     }, () => {
+    //         this.serverChangeCart()
+    //     })
+    // }
+
+    /**
+     * 改变购物车count
+     * @param proId 
+     * @param isAdd 增加or减少
+     */
+    private changeCartCount(proId: number, newCount: number, itemData?: MenuItemDataType) {
+        console.log('changeCartCount', proId, newCount)
+        const { cartItemList } = this.state
+        if (cartItemList) {
+            let newCartList: MenuItemDataType[] = JSON.parse(JSON.stringify(cartItemList))
+            let foundItem = false
+            newCartList.forEach((mItem: MenuItemDataType) => {
+                if (Number(mItem.proId) === Number(proId)) {
+                    foundItem = true
+                    if (newCount > 0) { // add or minus
+                        mItem.selectCount = newCount
+                    } else { // delete
+                        // TODO：删除后是否保留count=0？
+                        mItem.selectCount = newCount
+                    }
                 }
+            })
+            console.log('---changeCartCount add new 0', foundItem, itemData)
+            if (!foundItem && itemData) { // cart新增
+                console.log('---changeCartCount add new 1')
+                newCartList.push({
+                    ...itemData,
+                    selectCount: 1
+                })
             }
-        })
-        this.setState({
-            menuList: newMenuList
-        }, () => {
-            this.serverChangeCart()
-        })
+            this.setState({
+                cartItemList: newCartList,
+            })
+        }
     }
 
     private sortMenuByPrice() {
@@ -298,12 +377,19 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     // 购物车modal
     private renderCartModal() {
-        const { isShowCartModal } = this.state
+        const { isShowCartModal, cartItemList, selectShop } = this.state
+        const cartSetData = {
+            shopId: selectShop.shopId,
+            shopName: selectShop.shopName,
+            cartItemList,
+        }
         return (
             <CartModal
                 isShow={isShowCartModal}
                 hideModalHandle={this.hideCartModal}
                 navigateToNewOrder={this.navigateToNewOrder}
+                cartSetData={cartSetData}
+                changeCartCount={this.changeCartCount}
             />
         )
     }
@@ -410,17 +496,33 @@ export default class MenuPage extends React.Component<IProps, IState> {
     }
 
     private renderMenuList() {
-        const { menuList } = this.state
-
-        const menuListView = menuList.map((mItem, index) => {
+        const { menuList, cartItemList } = this.state
+        const _this = this
+        const menuListView = menuList.map((mItem: MenuItemDataType, index) => {
+            const addCountHandle = () => {
+                if (cartItemList) {
+                    let foundItem = false
+                    cartItemList.forEach((cItem: MenuItemDataType) => {
+                        if (Number(cItem.proId) === Number(mItem.proId)) {
+                            foundItem = true
+                            console.log('index add to cart', cItem.proId)
+                            _this.changeCartCount(mItem.proId, cItem.selectCount + 1, mItem)
+                        }
+                    })
+                    if (!foundItem) {
+                        _this.changeCartCount(mItem.proId, 1, mItem)
+                    }
+                }
+            }
             return (
                 <MenuItem
                     key={`menuItem-${index}`}
                     itemData={mItem}
                     isShowDetail={true}
                     isShowStock={true}
-                    addCount={this.addMenuItemCount}
-                    deleteCount={this.deleteMenuItemCount}
+                    isShowCount={false}
+                    addCount={addCountHandle}
+                    deleteCount={() => { }}
                 />
             )
         })

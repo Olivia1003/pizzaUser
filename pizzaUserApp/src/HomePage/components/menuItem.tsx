@@ -18,8 +18,9 @@ interface IProps {
     itemData: MenuItemDataType;
     isShowDetail: boolean;
     isShowStock: boolean;
-    addCount: (id: number) => void;
-    deleteCount: (id: number) => void;
+    isShowCount: boolean;
+    addCount: () => void;
+    deleteCount: () => void;
 }
 
 interface IState {
@@ -51,35 +52,56 @@ export default class MenuItem extends React.Component<IProps, IState> {
     }
 
     private renderCountBar() {
+        const { isShowCount } = this.props
         const selectCount = this.props.itemData.selectCount || 0;
 
-        return (
-            <View style={styles.countWrap}>
-                <TouchableOpacity
-                    onPress={this.deleteCount}
-                    activeOpacity={0.7}
-                >
-                    <Icon
-                        reverse
-                        size={8}
-                        name='remove'
-                        color='#00aced'
-                    />
-                </TouchableOpacity>
-                <Text>{selectCount}</Text>
-                <TouchableOpacity
-                    onPress={this.addCount}
-                    activeOpacity={0.7}
-                >
-                    <Icon
-                        reverse
-                        size={8}
-                        name='add'
-                        color='#00aced'
-                    />
-                </TouchableOpacity>
-            </View>
-        )
+        if (isShowCount) {
+            return (
+                <View style={styles.countWrap}>
+                    <TouchableOpacity
+                        onPress={this.deleteCount}
+                        activeOpacity={0.7}
+                    >
+                        <Icon
+                            reverse
+                            size={8}
+                            name='remove'
+                            color='#00aced'
+                        />
+                    </TouchableOpacity>
+                    <Text>{selectCount}</Text>
+                    <TouchableOpacity
+                        onPress={this.addCount}
+                        activeOpacity={0.7}
+                    >
+                        <Icon
+                            reverse
+                            size={8}
+                            name='add'
+                            color='#00aced'
+                        />
+                    </TouchableOpacity>
+                </View>
+            )
+        } else {
+            return (
+                <View style={styles.countWrap}>
+                    <TouchableOpacity
+                        onPress={() => { this.props.addCount() }}
+                        activeOpacity={0.7}
+                    >
+                        <Icon
+                            raised
+                            reverse
+                            name="shopping-cart"
+                            size={15}
+                            color="#00aced"
+                        />
+                    </TouchableOpacity>
+                </View>
+            )
+        }
+
     }
 
     public render() {
