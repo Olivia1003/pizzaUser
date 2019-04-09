@@ -16,6 +16,7 @@ import { Button, Icon } from "react-native-elements"
 
 // service
 import { userMock } from '../common/mock/userMock'
+import { serverIns } from '../common/utils/serverRequest'
 
 // interface
 import { MenuItemDataType } from '../common/dataModal/menuItem'
@@ -77,9 +78,43 @@ export default class NewOrder extends React.Component<IProps, IState> {
 
     private commitPay() {
         console.log('确认支付')
-        setTimeout(() => {
-            this.navigateToPage('PayOver')
-        }, 100);
+        const { totalPrice, shopData, cartList } = this.state
+        const userData = getGlobal('userData')
+        if (userData && userData.userId && userData.address && cartList.length > 0) {
+            const itemList = cartList.map((cItem: MenuItemDataType) => {
+                return {
+                    item: {
+                        itemId: cItem.proId
+                    },
+                    count: cItem.selectCount
+                }
+            })
+            const reqParams = {
+                userId: userData.userId,
+                items: itemList,
+                shop: {
+                    shopId: shopData.shopId || 2
+                },
+                toPosX: userData.address.posX || '50.10',
+                toPosY: userData.address.posY || '5.1',
+                price: totalPrice
+            }
+            console.log('commitPay reqParams', reqParams)
+            serverIns.post('/order/addOrder', reqParams).then(
+                (res) => {
+                    if (res && res.data && res.data.status && Number(res.data.status) === 200) {
+                        console.log('commitPay success', res)
+                        this.navigateToPage('PayOver', { isSuccess: true })
+                    } else {
+                        console.log('commitPay fail', res)
+                        this.navigateToPage('PayOver', { isSuccess: false })
+                    }
+
+                }, (err) => {
+                    console.log('commitPay error', err)
+                    this.navigateToPage('PayOver', { isSuccess: false })
+                })
+        }
     }
 
     private renderShopAddress() {
