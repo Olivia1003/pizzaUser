@@ -42,7 +42,12 @@ interface IProps {
     isShow: boolean;
     hideModalHandle: any;
     navigateToNewOrder: any;
-    cartSetData: any;
+    cartSetData: {
+        shopId: number,
+        shopName: string,
+        shopPos: string;
+        cartItemList: MenuItemDataType[]
+    };
     changeCartCount: any;
 }
 
@@ -57,11 +62,6 @@ export default class CartModal extends React.Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
-            // cartSetData: {
-            //     shopId: '',
-            //     shopName: '',
-            //     cartItemList: [],
-            // },
             isShowAlert: false,
             totalPrice: 0
         }
@@ -141,9 +141,22 @@ export default class CartModal extends React.Component<IProps, IState> {
 
     private submitCartOrder() {
         const userId = getGlobal('userId')
-        const { navigateToNewOrder } = this.props
+        const { navigateToNewOrder, cartSetData } = this.props
+        const { totalPrice } = this.state
+        const itemList = JSON.parse(JSON.stringify(cartSetData.cartItemList))
+        if (itemList.length <= 0) {
+            showToast('购物车为空，无法下单')
+            this.props.hideModalHandle()
+            return
+        }
         const orderParams = {
-            itemList: []
+            itemList,
+            totalPrice,
+            shopData: {
+                shopId: cartSetData.shopId || 0,
+                shopName: cartSetData.shopName || '',
+                shopPos: cartSetData.shopPos || ''
+            }
         }
         if (navigateToNewOrder && typeof navigateToNewOrder === 'function') {
             navigateToNewOrder(orderParams)

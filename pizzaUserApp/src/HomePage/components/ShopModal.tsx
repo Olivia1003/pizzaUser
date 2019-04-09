@@ -5,7 +5,8 @@ import {
     Text,
     View,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from 'react-native'
 
 // components
@@ -22,38 +23,30 @@ const SCREEN_HEIGHT = Dimensions.get('window').height
 
 interface IProps {
     // title: string;
-    isShow: boolean
-    hideModalHandle: any
+    isShow: boolean;
+    hideModalHandle: any;
+    shopList: any[];
+    selectShopHandle: any;
 }
 
 interface IState {
-    shopList: any
+    // shopList: any[]
 }
 
 export default class ShopModal extends React.Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
-            shopList: []
+            // shopList: []
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log('componentWillReceiveProps', nextProps)
-        if (nextProps.isShow) {
-            // 请求服务
-            this.setState({
-                shopList: MOCK ? transferShopData(shopMock) : [],
-            })
-        }
-    }
-
-    private selectShopHandle(shopId: number) {
-        console.log('selectShopHandle', shopId)
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     console.log('componentWillReceiveProps', nextProps)
+    // }
 
     private renderShopList() {
-        const { shopList } = this.state
+        const { shopList, selectShopHandle } = this.props
         if (shopList) {
             const shopListView = shopList.map((sItem, index) => {
                 const shopName = sItem.shopName || ''
@@ -63,7 +56,7 @@ export default class ShopModal extends React.Component<IProps, IState> {
                         key={`shopItem-${index}`}
                         style={styles.shopItem}
                         activeOpacity={0.7}
-                        onPress={() => { this.selectShopHandle(sItem.shopId) }}
+                        onPress={() => { selectShopHandle(sItem) }}
                     >
                         <View style={styles.shopItemFirst}>
                             <Icon
@@ -101,11 +94,11 @@ export default class ShopModal extends React.Component<IProps, IState> {
                 onBackdropPress={() => { hideModalHandle() }}
                 width={SCREEN_WIDTH - 50}
                 height={SCREEN_HEIGHT - 200}
+                overlayBackgroundColor={'#eee'}
             >
-                <View style={styles.shopModal}>
+                <ScrollView style={styles.shopModal}>
                     {this.renderShopList()}
-
-                </View>
+                </ScrollView>
             </Overlay>
         )
     }

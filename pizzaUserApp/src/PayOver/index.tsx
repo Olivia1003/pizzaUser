@@ -30,21 +30,38 @@ export default class PayOver extends React.Component<IProps, IState> {
         };
     }
 
+    comp
+
     private pressBackHandle() {
         console.log('支付成功，返回')
         this.props.navigation.popToTop()
     }
 
     render() {
+        let paySuccess = false
+        if (this.props.navigation && this.props.navigation.state
+            && this.props.navigation.state.params && this.props.navigation.state.params.isSuccess) {
+            paySuccess = true
+        }
+
         return (
             <View style={styles.container}>
-                <Icon
-                    reverse
-                    name='check'
-                    color='#27ae60'
-                />
+                {
+                    paySuccess
+                        ? <Icon
+                            reverse
+                            name='check'
+                            color='#27ae60'
+                            size={25}
+                        />
+                        : <Icon
+                            name='info'
+                            color='#e74c3c'
+                            size={40}
+                        />
+                }
                 <View style={styles.payOverTitle}>
-                    <Text style={styles.payOverTxt}>支付成功！</Text>
+                    <Text style={styles.payOverTxt}>{paySuccess ? '支付成功！' : '支付失败'}</Text>
                 </View>
                 <Button
                     raised

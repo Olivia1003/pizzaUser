@@ -53,9 +53,10 @@ export default class MySearchBar extends React.Component<IProps, IState> {
                         placeholder="search..."
                         onChangeText={this.updateSearch}
                         value={searchValue}
+                        inputStyle={styles.searchInput}
                         platform="default"
                         clearIcon={null}
-                        cancelButtonTitle={'hello'}
+                        // cancelButtonTitle={'hello'}
                         cancelButtonProps={{
                             disabled: false
                         }}
@@ -79,6 +80,7 @@ export default class MySearchBar extends React.Component<IProps, IState> {
 const styles = StyleSheet.create({
     searchBarWrap: {
         // flex: 1,
+        // height: 50,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
@@ -95,5 +97,10 @@ const styles = StyleSheet.create({
     },
     searchBtn: {
         // width: '90%',
+    },
+    searchInput: {
+        // height: 20,
+        // backgroundColor: '#aaa',
+        // padding: 0
     }
 });

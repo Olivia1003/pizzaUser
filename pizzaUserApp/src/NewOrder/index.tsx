@@ -16,6 +16,13 @@ import { Button, Icon } from "react-native-elements"
 
 // service
 import { userMock } from '../common/mock/userMock'
+import { serverIns } from '../common/utils/serverRequest'
+
+// interface
+import { MenuItemDataType } from '../common/dataModal/menuItem'
+
+// Global
+import { getGlobal } from '../common/Global'
 
 const MOCK = true;
 interface IProps {
@@ -24,14 +31,42 @@ interface IProps {
 }
 
 interface IState {
-    // cartTotalList: cartSetItemType[]
+    cartList: MenuItemDataType[]; // 下单item list
+    totalPrice: number;
+    shopData: any;
+    userData: any;
 }
 export default class NewOrder extends React.Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
-            // cartTotalList: []
+            cartList: [],
+            totalPrice: 0,
+            shopData: {
+                shopId: 0,
+                shopName: '',
+                shopPos: ''
+            },
+            userData: {
+                nickName: '',
+                telephone: '',
+                address: {}
+            }
         };
+    }
+
+    componentDidMount() {
+        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params) {
+            const { params } = this.props.navigation.state
+            console.log('NewOrder componentDidMount', params)
+            const userData = getGlobal('userData')
+            this.setState({
+                cartList: params.itemList || [],
+                totalPrice: params.totalPrice || 0,
+                shopData: params.shopData || {},
+                userData
+            })
+        }
     }
 
     private navigateToPage(pageName: string, params: any = {}) {
@@ -43,12 +78,47 @@ export default class NewOrder extends React.Component<IProps, IState> {
 
     private commitPay() {
         console.log('确认支付')
-        setTimeout(() => {
-            this.navigateToPage('PayOver')
-        }, 100);
+        const { totalPrice, shopData, cartList } = this.state
+        const userData = getGlobal('userData')
+        if (userData && userData.userId && userData.address && cartList.length > 0) {
+            const itemList = cartList.map((cItem: MenuItemDataType) => {
+                return {
+                    item: {
+                        itemId: cItem.proId
+                    },
+                    count: cItem.selectCount
+                }
+            })
+            const reqParams = {
+                userId: userData.userId,
+                items: itemList,
+                shop: {
+                    shopId: shopData.shopId || 2
+                },
+                toPosX: userData.address.posX || '50.10',
+                toPosY: userData.address.posY || '5.1',
+                price: totalPrice
+            }
+            console.log('commitPay reqParams', reqParams)
+            serverIns.post('/order/addOrder', reqParams).then(
+                (res) => {
+                    if (res && res.data && res.data.status && Number(res.data.status) === 200) {
+                        console.log('commitPay success', res)
+                        this.navigateToPage('PayOver', { isSuccess: true })
+                    } else {
+                        console.log('commitPay fail', res)
+                        this.navigateToPage('PayOver', { isSuccess: false })
+                    }
+
+                }, (err) => {
+                    console.log('commitPay error', err)
+                    this.navigateToPage('PayOver', { isSuccess: false })
+                })
+        }
     }
 
     private renderShopAddress() {
+        const { shopData } = this.state
         return (
             <View
                 style={styles.shopBar}
@@ -60,10 +130,10 @@ export default class NewOrder extends React.Component<IProps, IState> {
                     color='#00aced'
                 />
                 <View style={styles.shopName}>
-                    <Text style={styles.shopNameTxt}>披萨店A</Text>
+                    <Text style={styles.shopNameTxt}>{shopData.shopName}</Text>
                 </View>
                 <View style={styles.shopAddr}>
-                    <Text style={styles.shopAddrTxt}>金沙江路123号</Text>
+                    <Text style={styles.shopAddrTxt}>{shopData.shopPos}</Text>
                 </View>
             </View>
         )
@@ -88,23 +158,13 @@ export default class NewOrder extends React.Component<IProps, IState> {
     }
 
     private renderOrderList() {
-        const tempList = [
-            {
-                name: 'name a',
-                selectCount: '3',
-                price: '12'
-            },
-            {
-                name: 'name b',
-                selectCount: '3',
-                price: '12'
-            }
-        ]
+        const { cartList } = this.state
+        console.log('newOrder renderOrderList', cartList)
 
         return (
             <View style={styles.orderCard}>
                 {
-                    tempList.map((oItem, index) => {
+                    cartList.map((oItem, index) => {
                         return this.renderNewOrderItem(oItem, index)
                     })
                 }
@@ -114,7 +174,7 @@ export default class NewOrder extends React.Component<IProps, IState> {
     }
 
     private renderPriceBar() {
-        const totalPrice = 100
+        const { totalPrice } = this.state
         return (
             <View style={styles.priceBar}>
                 <Text style={styles.priceLabelTxt}>小计</Text>
@@ -124,12 +184,10 @@ export default class NewOrder extends React.Component<IProps, IState> {
     }
 
     private renderUserInfo() {
-        const userData = userMock.user
-
+        const { userData } = this.state
         if (!userData || !userData.address) {
             return (<View />)
         }
-
         const { name, phone, addressStr, addressStr2 } = userData.address
 
         return (
@@ -231,10 +289,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end'
     },
     itemNameText: {
-        fontSize: 20
+        fontSize: 18,
+        color: '#333'
     },
     itemCountText: {
-        fontSize: 20
+        fontSize: 20,
+        color: '#333'
     },
     itemPriceText: {
         fontSize: 20,
