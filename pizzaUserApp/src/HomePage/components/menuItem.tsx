@@ -95,7 +95,7 @@ export default class MenuItem extends React.Component<IProps, IState> {
                             reverse
                             name="shopping-cart"
                             size={15}
-                            color="#00aced"
+                            color="#97CAE5"
                         />
                     </TouchableOpacity>
                 </View>
@@ -106,8 +106,18 @@ export default class MenuItem extends React.Component<IProps, IState> {
 
     public render() {
         const { itemData, isShowDetail, isShowStock } = this.props
-        // const imgUrl = require('../../../images/pizza.png')
-
+        // const imgList = [
+        //     'http://m.xdfxccy.com/images/65.jpg',
+        //     'https://i1.wp.com/birthdaywishings.com/wp-content/uploads/2017/09/54212712cef9db878772e34585a202a5.jpg?resize=360%2C180&ssl=1',
+        //     'https://y.zdmimg.com/201809/18/5ba091857219e5069.jpg_g360.jpg',
+        //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfJDs9tyEOI00NRo4cowitrtj04kvz8N3_GXE3RXBGhethDOVs'
+        // ]
+        // const imgUri = imgList[Number(itemData.proId) % 4]
+        const imgList = [
+            'http://m.xdfxccy.com/images/65.jpg',
+            'https://i1.wp.com/birthdaywishings.com/wp-content/uploads/2017/09/54212712cef9db878772e34585a202a5.jpg?resize=360%2C180&ssl=1',
+        ]
+        const imgUri = imgList[Number(itemData.proId) % 2]
         if (itemData && itemData.imgUrl) {
             const { name, detail, stock, price, imgUrl } = itemData;
             const detailView = isShowDetail
@@ -127,7 +137,9 @@ export default class MenuItem extends React.Component<IProps, IState> {
                     <View style={styles.menuItem}>
                         <Image
                             style={styles.pizzaImg}
-                            source={require('../../../images/pizza.png')}
+                            // source={require('../../../images/pizza.png')}
+                            // source={{ uri: 'http://m.xdfxccy.com/images/65.jpg' }}
+                            source={{ uri: imgUri }}
                         />
                         <View style={styles.rightPart}>
                             <Text style={styles.nameTxt}>{name}</Text>
@@ -170,14 +182,14 @@ const styles = StyleSheet.create({
     },
     menuItem: {
         flexDirection: 'row',
-        height: 90,
+        height: 95,
         overflow: 'hidden',
         borderRadius: 5,
         backgroundColor: '#fff',
     },
     pizzaImg: {
         width: 90,
-        height: 90,
+        height: 95,
         // borderTopLeftRadius: 5,
         // borderBottomLeftRadius: 5,
         backgroundColor: '#ccc'
@@ -204,7 +216,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         position: 'absolute',
-        bottom: 5,
+        bottom: 2,
         right: 10
     },
     stock: {

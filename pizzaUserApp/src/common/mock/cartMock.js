@@ -18,7 +18,7 @@ const cartMock = {
                         description: '',
                         state: '',
                     },
-                    count: 0,
+                    count: 1,
                 },
                 {
                     item: {
@@ -30,7 +30,7 @@ const cartMock = {
                         description: '',
                         state: '',
                     },
-                    count: 0,
+                    count: 2,
                 }
             ]
         },

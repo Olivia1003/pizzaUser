@@ -27,7 +27,7 @@ import CartModal from './components/CartModal'
 // mock
 import { menuMock } from '../common/mock/menuMock'
 import { cartMock } from '../common/mock/cartMock'
-const MOCK = true
+const MOCK = false
 
 // service
 import { transferMenuData, transferCartData } from './service/menuTransfer'
@@ -157,7 +157,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
             serverIns.get(`/cart/showCart?shopId=${shopId}`)
                 .then((res) => {
                     console.log('fetchCartData success', res)
-                    showToast('fetchCartData success')
+                    // showToast('fetchCartData success')
                     if (res && res.data && res.data.model) {
                         this.setState({
                             cartItemList: transferCartData(res.data.model).cartItemList,
@@ -165,7 +165,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                     }
                 }, (err) => {
                     console.log('fetchCartData fail', err)
-                    showToast('fetchCartData fail')
+                    // showToast('fetchCartData fail')
                 })
         }
     }
@@ -175,21 +175,25 @@ export default class MenuPage extends React.Component<IProps, IState> {
         const { selectShop, cartItemList } = this.state
         if (selectShop && selectShop.shopId && cartItemList) {
             const shopId = selectShop.shopId
-            const items = cartItemList.map((mItem) => {
-                return {
-                    item: {
-                        itemId: mItem.proId
-                    },
-                    count: mItem.selectCount
-                }
-            })
+            const items = cartItemList
+                .map((mItem) => {
+                    return {
+                        item: {
+                            itemId: mItem.proId
+                        },
+                        count: mItem.selectCount
+                    }
+                })
+                .filter((mItem) => {
+                    return mItem.count > 0
+                })
             console.log('serverChangeCart request', JSON.stringify({
                 shop: {
                     shopId
                 },
                 items
             }))
-            serverIns.post('/menu/showMenu', {
+            serverIns.post('/cart/addToCart', {
                 shop: {
                     shopId
                 },
@@ -198,9 +202,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 (res) => {
                     console.log('serverChangeCart success', res)
                     if ((res.data && res.data.status || '') === '200') {
-                        showToast('添加成功')
+                        showToast('添加购物车成功')
                     } else {
-                        showToast('添加失败')
+                        showToast('添加购物车失败')
                     }
                 }, (err) => {
                     console.log('serverChangeCart error', err)
@@ -300,6 +304,8 @@ export default class MenuPage extends React.Component<IProps, IState> {
             }
             this.setState({
                 cartItemList: newCartList,
+            }, () => {
+                this.serverChangeCart()
             })
         }
     }
@@ -352,15 +358,19 @@ export default class MenuPage extends React.Component<IProps, IState> {
     private renderSwiper() {
         return (
             <View style={styles.sliderWrap}>
-                <Swiper>
+                <Swiper
+                    autoplay={true}
+                    autoplayTimeout={2}
+                    autoplayDirection={true}
+                >
                     <View style={styles.slide1}>
-                        <Text style={styles.text}>Hello Swiper</Text>
+                        <Text style={styles.text}>{'Pizza Express'}</Text>
                     </View>
                     <View style={styles.slide2}>
-                        <Text style={styles.text}>Beautiful</Text>
+                        <Text style={styles.text}>{'30 min'}</Text>
                     </View>
                     <View style={styles.slide3}>
-                        <Text style={styles.text}>And simple</Text>
+                        <Text style={styles.text}>{'TASTY & FAST'}</Text>
                     </View>
                 </Swiper>
             </View>
@@ -381,6 +391,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
         const cartSetData = {
             shopId: selectShop.shopId,
             shopName: selectShop.shopName,
+            shopPos: selectShop.posString,
             cartItemList,
         }
         return (
