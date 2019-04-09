@@ -85,9 +85,6 @@ export default class BottomModal extends React.Component<IProps, IState> {
         const { contentOpacity } = this.state
         const { modalContent } = this.props
 
-        console.log('render BottomModal', modalContent)
-
-
         return (
             <Animated.View
                 style={[styles.modalMask, { opacity: contentOpacity }]}

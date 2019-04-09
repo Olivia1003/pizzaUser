@@ -53,7 +53,6 @@ export default class MapModal extends React.Component<IProps, IState> {
     }
 
     public render() {
-        console.log('render ShopModal')
         const { isShow, hideModalHandle } = this.props
         return (
             <Overlay

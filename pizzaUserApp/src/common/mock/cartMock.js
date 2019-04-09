@@ -3,34 +3,34 @@ const cartMock = {
         {
             cartId: '1',
             userId: '1',
-            shop: {
-                shopId: '222',
-                shopName: '我爱pizza（金沙江路店）111',
-            },
+            // shop: {
+            //     shopId: '222',
+            //     shopName: '我爱pizza（金沙江路店）111',
+            // },
             items: [
                 {
                     item: {
                         itemId: '1',
-                        itemName: '吮指原味鸡222',
+                        itemName: '吮指原味鸡111',
                         price: '12',
                         picUrl: '',
                         size: '13',
                         description: '',
                         state: '',
                     },
-                    count: 3,
+                    count: 0,
                 },
                 {
                     item: {
                         itemId: '2',
-                        itemName: '香辣鸡翅333',
+                        itemName: '香辣鸡翅222',
                         price: '20',
                         picUrl: '',
                         size: '13',
                         description: '',
                         state: '',
                     },
-                    count: 3,
+                    count: 0,
                 }
             ]
         },

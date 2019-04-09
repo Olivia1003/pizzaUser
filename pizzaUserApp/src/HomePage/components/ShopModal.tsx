@@ -53,7 +53,6 @@ export default class ShopModal extends React.Component<IProps, IState> {
     }
 
     private renderShopList() {
-        console.log('renderShopList', this.state.shopList)
         const { shopList } = this.state
         if (shopList) {
             const shopListView = shopList.map((sItem, index) => {
@@ -95,7 +94,6 @@ export default class ShopModal extends React.Component<IProps, IState> {
 
 
     public render() {
-        console.log('render ShopModal')
         const { isShow, hideModalHandle } = this.props
         return (
             <Overlay

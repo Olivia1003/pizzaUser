@@ -1,7 +1,7 @@
 
 // 首页菜单
 export function transferMenuData(serverData) {
-    console.log('transferMenuData', serverData)
+    console.log('transferMenuData input', serverData)
     const menuList = serverData.map((mItem) => {
         if (!mItem || !mItem.item) {
             return
@@ -16,6 +16,7 @@ export function transferMenuData(serverData) {
             imgUrl: '../../../images/pizza.png'
         }
     })
+    console.log('transferMenuData res', menuList)
     return menuList
 }
 

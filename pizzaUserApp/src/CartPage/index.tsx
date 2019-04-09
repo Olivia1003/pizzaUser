@@ -7,8 +7,10 @@ import * as React from 'react';
 import {
     Platform,
     StyleSheet,
-    Text, TouchableOpacity,
-    View
+    Text,
+    TouchableOpacity,
+    View,
+    ScrollView
 } from 'react-native';
 import TopHeader from '../common/component/TopHeader'
 import { cartMock } from "../common/mock/cartMock"
@@ -24,11 +26,16 @@ import { transferCartTotalData } from './service/cartTransfer'
 import { cartSetItemType } from '../common/dataModal/cart'
 import { MenuItemDataType } from '../common/dataModal/menuItem'
 
+// Global
+import { getGlobal } from '../common/Global'
+
 // util
 import { calculatePrice } from '../common/utils/priceCal'
+
 const MOCK = true;
 interface IProps {
     // data: any;
+    navigation: any;
 }
 
 interface IState {
@@ -59,6 +66,24 @@ export default class CartPage extends React.Component<IProps, IState> {
         this.setState({
             cartTotalList: newTotalList
         })
+    }
+
+    private navigateToPage(pageName: string, params) {
+        console.log('navigateToPage---', pageName)
+        if (this.props.navigation && typeof this.props.navigation.navigate === 'function') {
+            this.props.navigation.navigate(pageName, params)
+        }
+    }
+
+    private submitCartOrder() {
+        const userId = getGlobal('userId')
+        console.log('submitCartOrder', userId)
+        const orderParams = {
+            itemList: []
+        }
+        console.log('新增订单', orderParams)
+        this.navigateToPage('NewOrder', orderParams)
+
     }
 
     // 购物车中一项
@@ -113,7 +138,7 @@ export default class CartPage extends React.Component<IProps, IState> {
                         <View style={styles.bottomContent}>
                             <Text style={styles.itemTotalPriceText}>小计 ¥{setItemList.setPrice}</Text>
                             <Button
-                                // onPress={pressCallback}
+                                onPress={() => { this.submitCartOrder() }}
                                 title="结算"
                                 buttonStyle={[styles.btnBase]}
                                 titleStyle={[styles.btnTitleBase]}
@@ -130,7 +155,6 @@ export default class CartPage extends React.Component<IProps, IState> {
 
     private renderCartList() {
         const { cartTotalList } = this.state
-        console.log('renderCartList total', cartTotalList)
         if (cartTotalList) {
             const cartListView = cartTotalList.map((cartItem, index) => {
                 return (
@@ -140,9 +164,9 @@ export default class CartPage extends React.Component<IProps, IState> {
                 )
             })
             return (
-                <View>
+                <ScrollView>
                     {cartListView}
-                </View>
+                </ScrollView>
             )
         } else {
             return (<View />)
@@ -216,7 +240,9 @@ const styles = StyleSheet.create({
         width: '20%'
     },
     itemPrice: {
-        width: '30%'
+        width: '30%',
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     itemNameText: {
         fontSize: 20
@@ -226,7 +252,7 @@ const styles = StyleSheet.create({
     },
     itemPriceText: {
         fontSize: 20,
-        color: '#FF7F50'
+        color: '#FF7F50',
     },
     itemTotalPriceText: {
         fontSize: 20,

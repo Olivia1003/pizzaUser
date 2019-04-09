@@ -147,7 +147,6 @@ export default class OrderPage extends React.Component<IProps, IState> {
 
     // 地址modal
     private renderMapModal() {
-        console.log('renderMapModal')
         const { isShowMapModal } = this.state
         return (
             <MapModal isShow={isShowMapModal} hideModalHandle={this.hideMapModal} />
@@ -190,7 +189,9 @@ const styles = StyleSheet.create({
         width: '30%'
     },
     itemPrice: {
-        width: '30%'
+        width: '30%',
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     itemNameText: {
         fontSize: 20
