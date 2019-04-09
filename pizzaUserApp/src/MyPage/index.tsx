@@ -16,8 +16,13 @@ import {Avatar, Button, Input} from 'react-native-elements'
 import {userMock} from '../common/mock/userMock'
 import add = Animated.add;
 
+// gloabl
+import {getGlobal,setGlobal} from "../common/Global";
+import {serverIns} from "../common/utils/serverRequest";
+import {showToast} from "../common/utils/Toast";
+import {transferUser} from "../common/userTransfer";
 
-const MOCK = true;
+const MOCK = false;
 
 
 interface IProps {
@@ -28,10 +33,12 @@ interface IProps {
 export default class MenuPage extends React.Component<IProps> {
     constructor(props) {
         super(props)
-        let addressOld = userMock.user.address || {}
+        let user = getGlobal('user');
+        let addressOld = user.address || {}
+
         let address = JSON.parse(JSON.stringify(addressOld));
         this.state = {
-            user: MOCK ? userMock.user : {},
+            user: MOCK ? userMock.user : user,
             address: address
         }
         this.navigateToPage = this.navigateToPage.bind(this)
@@ -41,13 +48,49 @@ export default class MenuPage extends React.Component<IProps> {
         this.props.navigation.navigate(pageName)
     }
 
+    private save(){
+        const { user, address} = this.state;
+        let string = address.addressStr+address.addressStr2;
+        console.log('location',string)
+        serverIns.get(`https://restapi.amap.com/v3/geocode/geo?address=${string}&city=&key=79ec561a8277c4156d36d6bf67f9248e`).then(res=>{
+            let geos = res.data.geocodes
+            if (geos && geos.length > 0 ){
+                let geo = geos[0].location
+                address.posX = geo.split(',')[0]
+                address.posY = geo.split(',')[1]
+                console.log(address);
+                user.address = JSON.stringify(address)
+                serverIns.put(`/user/${user.userId}`, user).then((res) => {
+                    let user = transferUser(res.data);
+                    setGlobal('user',user )
+                    this.setState({user})
+                    let addressOld = user.address || {}
+                    let address = JSON.parse(JSON.stringify(addressOld));
+                    this.setState({address})
+                    showToast('更新成功')
+                }, (err) => {
+                    console.log('err',err)
+                    showToast('更新失败')
+                })
+            }
+            else{
+                showToast('地址无法转换成坐标')
+            }
+        },res=>{
+            showToast('地址无法转换成坐标')
+        });
+
+    }
+
+
     public renderBtn(addressParam) {
         const { user } = this.state;
         let { address } = user;
         if (JSON.stringify(addressParam) !== JSON.stringify(address)) {
             return (
                 <View style={styles.btn}>
-                    <Button title='保存'/>
+                    <Button title='保存'
+                            onPress={() => { this.save() }}/>
                 </View>
             )
         }
@@ -72,6 +115,9 @@ export default class MenuPage extends React.Component<IProps> {
                         />
                         <View style={styles.textarea}>
                             <Text style={styles.userName}>{user.nickName}</Text>
+                        </View>
+                        <View style={styles.textarea}>
+                            <Text style={styles.userName}>余额: {user.money}</Text>
                         </View>
                     </View>
                     <View style={styles.address}>

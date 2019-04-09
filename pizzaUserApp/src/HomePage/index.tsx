@@ -36,6 +36,8 @@ import { serverIns } from '../common/utils/serverRequest'
 // interface
 import { MenuItemDataType } from '../common/dataModal/menuItem'
 import { cartSetItemType } from '../common/dataModal/cart'
+import {setGlobal} from "../common/Global";
+import {transferUser} from "../common/userTransfer";
 interface IProps {
     // data: any;
     navigation: any;
@@ -111,6 +113,8 @@ export default class MenuPage extends React.Component<IProps, IState> {
             password: "123"
         }).then((res) => {
             console.log('checkLogin success', res)
+            setGlobal('user', transferUser(res.data.model))
+            console.log('transferUser(res.data)',transferUser(res.data.model));
             showToast('登录成功')
         }, (err) => {
             console.log('checkLogin fail', err)

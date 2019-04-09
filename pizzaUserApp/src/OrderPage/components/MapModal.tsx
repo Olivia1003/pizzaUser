@@ -24,6 +24,7 @@ interface IProps {
     // title: string;
     isShow: boolean
     hideModalHandle: any
+    position: any
 }
 
 interface IState {
@@ -53,7 +54,8 @@ export default class MapModal extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const { isShow, hideModalHandle } = this.props
+        const { isShow, hideModalHandle ,position} = this.props
+        const { fromX, fromY, toX, toY} = position
         return (
             <Overlay
                 isVisible={isShow}
@@ -62,7 +64,7 @@ export default class MapModal extends React.Component<IProps, IState> {
                 height={SCREEN_HEIGHT - 200}
             >
                 <WebView
-                    source={{ uri: 'http://localhost:63342/SeatBack/html/userMap.html?_ijt=bs2ohth1c6lohfh2gjm314bblp' }}
+                    source={{ uri: `http://localhost:8021/?fromX=${fromX}&fromY=${fromY}&toX=${toX}&toY=${toY}` }}
                     style={{ marginTop: 20 }}
                 />
             </Overlay>

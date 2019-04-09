@@ -15,8 +15,12 @@ import { orderMock } from '../common/mock/orderMock'
 import { Button, Icon } from 'react-native-elements'
 
 import MapModal from "./components/MapModal";
+import {serverIns} from "../common/utils/serverRequest";
+import {transferUser} from "../common/userTransfer";
+import {setGlobal} from "../common/Global";
+import {showToast} from "../common/utils/Toast";
 
-const MOCK = true;
+const MOCK = false;
 
 interface IProps {
     // data: any;
@@ -33,8 +37,16 @@ export default class OrderPage extends React.Component<IProps, IState> {
             isShowMapModal: false,
             orderList: MOCK ? orderMock.orderList : []
         };
+
         this.showMapModal = this.showMapModal.bind(this)
         this.hideMapModal = this.hideMapModal.bind(this)
+    }
+
+    componentDidMount(): void {
+        serverIns.get(`/order/getOrdersById`).then((res) => {
+            let orderList = res.data.model
+            this.setState({orderList})
+        })
     }
 
     private deleteOrder(orderId) {
@@ -46,19 +58,27 @@ export default class OrderPage extends React.Component<IProps, IState> {
 
         })*/
     }
-    private checkOrder(orderId) {
-        console.log('check ', orderId);
+    private checkOrder(order) {
+        console.log('check ', order);
+        let position = {}
+        position.fromX = order.shop.posX
+        position.fromY = order.shop.posY
+        position.toX = order.toPosX
+        position.toY = order.toPosY
+        this.setState({position})
         this.showMapModal()
     }
 
     render() {
+        let {position} = this.state;
+        position = position || {}
         return (
             <View style={styles.orderPage}>
                 <TopHeader title={'我的订单'} />
                 <ScrollView>
                     {this.renderOrderList()}
                 </ScrollView>
-                {this.renderMapModal()}
+                {this.renderMapModal(position)}
 
             </View>
         )
@@ -119,7 +139,7 @@ export default class OrderPage extends React.Component<IProps, IState> {
             )
         } else {
             const pressCallback = () => {
-                this.checkOrder(order.orderId)
+                this.checkOrder(order)
             };
             return (
                 <Button onPress={pressCallback}
@@ -146,10 +166,10 @@ export default class OrderPage extends React.Component<IProps, IState> {
     }
 
     // 地址modal
-    private renderMapModal() {
-        const { isShowMapModal } = this.state
+    private renderMapModal(position) {
+        const { isShowMapModal} = this.state
         return (
-            <MapModal isShow={isShowMapModal} hideModalHandle={this.hideMapModal} />
+            <MapModal position={position} isShow={isShowMapModal} hideModalHandle={this.hideMapModal} />
         )
     }
 
