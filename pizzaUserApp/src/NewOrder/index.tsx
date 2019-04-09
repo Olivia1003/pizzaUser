@@ -34,7 +34,6 @@ interface IState {
     cartList: MenuItemDataType[]; // 下单item list
     totalPrice: number;
     shopData: any;
-    userData: any;
 }
 export default class NewOrder extends React.Component<IProps, IState> {
     constructor(props) {
@@ -47,11 +46,6 @@ export default class NewOrder extends React.Component<IProps, IState> {
                 shopName: '',
                 shopPos: ''
             },
-            userData: {
-                nickName: '',
-                telephone: '',
-                address: {}
-            }
         };
     }
 
@@ -59,12 +53,10 @@ export default class NewOrder extends React.Component<IProps, IState> {
         if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params) {
             const { params } = this.props.navigation.state
             console.log('NewOrder componentDidMount', params)
-            const userData = getGlobal('userData')
             this.setState({
                 cartList: params.itemList || [],
                 totalPrice: params.totalPrice || 0,
                 shopData: params.shopData || {},
-                userData
             })
         }
     }
@@ -79,7 +71,7 @@ export default class NewOrder extends React.Component<IProps, IState> {
     private commitPay() {
         console.log('确认支付')
         const { totalPrice, shopData, cartList } = this.state
-        const userData = getGlobal('userData')
+        const userData = getGlobal('user')
         if (userData && userData.userId && userData.address && cartList.length > 0) {
             const itemList = cartList.map((cItem: MenuItemDataType) => {
                 return {
@@ -184,7 +176,8 @@ export default class NewOrder extends React.Component<IProps, IState> {
     }
 
     private renderUserInfo() {
-        const { userData } = this.state
+        const userData = getGlobal('user')
+
         if (!userData || !userData.address) {
             return (<View />)
         }
