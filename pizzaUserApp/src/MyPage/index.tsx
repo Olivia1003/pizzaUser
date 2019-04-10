@@ -32,6 +32,7 @@ interface IProps {
 }
 export default class MenuPage extends React.Component<IProps> {
     constructor(props) {
+
         super(props)
         let user = getGlobal('user');
         let addressOld = user.address || {}
@@ -41,7 +42,19 @@ export default class MenuPage extends React.Component<IProps> {
             user: MOCK ? userMock.user : user,
             address: address
         }
+
         this.navigateToPage = this.navigateToPage.bind(this)
+    }
+
+    componentDidMount(): void {
+        let user = getGlobal('user');
+        let addressOld = user.address || {}
+
+        let address = JSON.parse(JSON.stringify(addressOld));
+        this.state = {
+            user: MOCK ? userMock.user : user,
+            address: address
+        }
     }
 
     private navigateToPage(pageName) {
@@ -147,8 +160,8 @@ export default class MenuPage extends React.Component<IProps> {
                         </View>
                         <View style={styles.input}>
                             <Input
-                                placeholder='地址'
-                                label='地址'
+                                placeholder='上海市'
+                                label='市'
                                 value={address.addressStr}
                                 onChangeText={(text) => {
                                     let { address } = this.state
