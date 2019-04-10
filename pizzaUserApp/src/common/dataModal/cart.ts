@@ -9,6 +9,7 @@ import { MenuItemDataType } from './menuItem'
 export interface cartSetItemType {
     shopId: string
     shopName: string
+    shopPos: string
     cartItemList: MenuItemDataType[]
     setPrice?: number
 }

@@ -19,6 +19,7 @@ export function transferCartTotalData(serverData) {
             return {
                 shopId: cartItem.shop && cartItem.shop.shopId || '',
                 shopName: cartItem.shop && cartItem.shop.shopName || '',
+                shopPos: cartItem.shop && cartItem.shop.shopPos || '',
                 cartItemList,
             }
         })

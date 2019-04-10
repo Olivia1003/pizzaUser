@@ -3,10 +3,11 @@ const cartMock = {
         {
             cartId: '1',
             userId: '1',
-            // shop: {
-            //     shopId: '222',
-            //     shopName: '我爱pizza（金沙江路店）111',
-            // },
+            shop: {
+                shopId: '1',
+                shopName: '我爱pizza',
+                shopPos: '金沙江路222号'
+            },
             items: [
                 {
                     item: {
@@ -38,8 +39,9 @@ const cartMock = {
             cartId: '1',
             userId: '1',
             shop: {
-                shopId: '222',
-                shopName: '我爱pizza（金沙江路店）222',
+                shopId: '2',
+                shopName: '超级pizza',
+                shopPos: '中山北路123号'
             },
             items: [
                 {

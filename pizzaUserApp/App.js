@@ -124,8 +124,6 @@ const RootPage = createAppContainer(stackNavigator)
 export default class App extends React.Component {
   render() {
     return (
-      // <RootPage />
-
       <View style={styles.container}>
         <RootPage />
       </View>
