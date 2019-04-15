@@ -37,8 +37,8 @@ import { serverIns } from '../common/utils/serverRequest'
 // interface
 import { MenuItemDataType } from '../common/dataModal/menuItem'
 import { cartSetItemType } from '../common/dataModal/cart'
-import {setGlobal} from "../common/Global";
-import {transferUser} from "../common/userTransfer";
+import { setGlobal } from "../common/Global";
+import { transferUser } from "../common/userTransfer";
 interface IProps {
     // data: any;
     navigation: any;
@@ -80,7 +80,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                 shopName: '',
                 posString: ''
             },
-            priceSortUp: false
+            priceSortUp: false,
         }
         this.navigateToPage = this.navigateToPage.bind(this)
         this.navigateToNewOrder = this.navigateToNewOrder.bind(this)
@@ -119,7 +119,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
         }).then((res) => {
             console.log('checkLogin success', res)
             setGlobal('user', transferUser(res.data.model))
-            console.log('transferUser(res.data)',transferUser(res.data.model));
+            console.log('transferUser(res.data)', transferUser(res.data.model));
             showToast('登录成功')
         }, (err) => {
             console.log('checkLogin fail', err)
@@ -189,6 +189,37 @@ export default class MenuPage extends React.Component<IProps, IState> {
         }
     }
 
+    // 服务：搜索菜单
+    private fetchSearchMenu() {
+        const keyword = this.state.searchValue || ''
+        console.log('fetchSearchMenu keyword', keyword)
+        if (MOCK) {
+            this.setState({
+                menuList: transferMenuData(menuMock.menu.items)
+            })
+        } else {
+            const { selectShop } = this.state
+            serverIns.post('/menu/search', {
+                shopId: selectShop && selectShop.shopId || '2',
+                keywords: keyword
+            }).then(
+                (res) => {
+                    console.log('fetchSearchMenu success', res, res.data.model)
+                    if (res && res.data && res.data.model) {
+                        this.setState({
+                            menuList: transferMenuData(res.data.model)
+                        })
+                    } else {
+                        this.setState({
+                            menuList: []
+                        })
+                    }
+                }, (err) => {
+                    console.log('fetchSearchMenu error', err)
+                })
+        }
+    }
+
     // 服务：获取购物车列表
     private fetchCartData() {
         console.log('fetchCartData start')
@@ -202,7 +233,6 @@ export default class MenuPage extends React.Component<IProps, IState> {
             serverIns.get(`/cart/showCart?shopId=${shopId}`)
                 .then((res) => {
                     console.log('fetchCartData success', res)
-                    // showToast('fetchCartData success')
                     if (res && res.data && res.data.model) {
                         this.setState({
                             cartItemList: transferCartData(res.data.model).cartItemList,
@@ -210,7 +240,6 @@ export default class MenuPage extends React.Component<IProps, IState> {
                     }
                 }, (err) => {
                     console.log('fetchCartData fail', err)
-                    // showToast('fetchCartData fail')
                 })
         }
     }
@@ -272,6 +301,12 @@ export default class MenuPage extends React.Component<IProps, IState> {
             isShowCartModal: false
         }, () => {
             _this.navigateToPage('NewOrder', orderParams)
+        })
+    }
+
+    private updateSearchValue(value: string) {
+        this.setState({
+            searchValue: value
         })
     }
 
@@ -496,6 +531,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     private renderFreshBtn() {
         const freshHandle = () => {
+            this.setState({
+                searchValue: ''
+            })
             this.fetchMenuListData()
             this.fetchCartData()
         }
@@ -535,34 +573,44 @@ export default class MenuPage extends React.Component<IProps, IState> {
     private renderMenuList() {
         const { menuList, cartItemList } = this.state
         const _this = this
-        const menuListView = menuList.map((mItem: MenuItemDataType, index) => {
-            const addCountHandle = () => {
-                if (cartItemList) {
-                    let foundItem = false
-                    cartItemList.forEach((cItem: MenuItemDataType) => {
-                        if (Number(cItem.proId) === Number(mItem.proId)) {
-                            foundItem = true
-                            console.log('index add to cart', cItem.proId)
-                            _this.changeCartCount(mItem.proId, cItem.selectCount + 1, mItem)
+        let menuListView = undefined
+        if (menuList && menuList.length > 0) {
+            menuListView = menuList.map((mItem: MenuItemDataType, index) => {
+                const addCountHandle = () => {
+                    if (cartItemList) {
+                        let foundItem = false
+                        cartItemList.forEach((cItem: MenuItemDataType) => {
+                            if (Number(cItem.proId) === Number(mItem.proId)) {
+                                foundItem = true
+                                console.log('index add to cart', cItem.proId)
+                                _this.changeCartCount(mItem.proId, cItem.selectCount + 1, mItem)
+                            }
+                        })
+                        if (!foundItem) {
+                            _this.changeCartCount(mItem.proId, 1, mItem)
                         }
-                    })
-                    if (!foundItem) {
-                        _this.changeCartCount(mItem.proId, 1, mItem)
                     }
                 }
-            }
-            return (
-                <MenuItem
-                    key={`menuItem-${index}`}
-                    itemData={mItem}
-                    isShowDetail={true}
-                    isShowStock={true}
-                    isShowCount={false}
-                    addCount={addCountHandle}
-                    deleteCount={() => { }}
-                />
+                return (
+                    <MenuItem
+                        key={`menuItem-${index}`}
+                        itemData={mItem}
+                        isShowDetail={true}
+                        isShowStock={true}
+                        isShowCount={false}
+                        addCount={addCountHandle}
+                        deleteCount={() => { }}
+                    />
+                )
+            })
+        } else {
+            menuListView = (
+                <View style={styles.blankWrap}>
+                    <Text style={styles.blankTxt}>啥也没有~</Text>
+                </View>
             )
-        })
+        }
+
 
         return (
             <ScrollView style={styles.menuList}>
@@ -572,13 +620,22 @@ export default class MenuPage extends React.Component<IProps, IState> {
     }
 
     public render() {
+        const { searchValue } = this.state
 
         return (
             <View style={styles.container}>
                 <TopHeader title={'首页'} />
                 {this.renderSwiper()}
                 {this.renderShopBar()}
-                <MySearchBar />
+                <MySearchBar
+                    searchValue={searchValue}
+                    onUpdateSearch={(value) => {
+                        this.updateSearchValue(value)
+                    }}
+                    onCommitSearch={() => {
+                        this.fetchSearchMenu()
+                    }}
+                />
                 {this.renderSortBar()}
                 {this.renderMenuList()}
                 {this.renderCartEntry()}
@@ -703,5 +760,16 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 30,
         fontWeight: 'bold',
+    },
+    // blank
+    blankWrap: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 10
+    },
+    blankTxt: {
+        fontSize: 15,
+        color: '#777',
+        textAlign: 'center'
     }
 });

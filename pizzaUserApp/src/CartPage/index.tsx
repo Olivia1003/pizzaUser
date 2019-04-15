@@ -34,10 +34,10 @@ import { getGlobal } from '../common/Global'
 // util
 import { calculatePrice } from '../common/utils/priceCal'
 
-const MOCK = true;
+const MOCK = false
 interface IProps {
     // data: any;
-    navigation: any;
+    navigation: any
 }
 
 interface IState {
@@ -51,34 +51,31 @@ export default class CartPage extends React.Component<IProps, IState> {
         };
     }
 
-    // public componentDidMount() {
-    //     this.fetchCartData()
-    // }
-
     private fetchCartData() {
         let newTotalList = []
         if (MOCK) {
-            newTotalList = transferCartTotalData(cartMock).cartTotalList
-
+            newTotalList = transferCartTotalData(cartMock.carts).cartTotalList
         } else {
             newTotalList = []
-            // serverIns.post('/cart/showAllCart').then((res) => {
-            //     console.log('fetchCartData success', res)
-            // }, (err) => {
-            //     console.log('fetchCartData fail', err)
-            // })
+            serverIns.get('/cart/showAllCart').then((res) => {
+                console.log('fetchCartData success', res)
+                if (res && res.data && res.data.model) {
+                    const cartTotalList = transferCartTotalData(res.data.model).cartTotalList.map((setItem) => {
+                        const setPrice = calculatePrice(setItem.cartItemList || [])
+                        return {
+                            setPrice,
+                            ...setItem
+                        }
+                    })
+                    console.log('fetchCartData cartTotalList', cartTotalList)
+                    this.setState({
+                        cartTotalList
+                    })
+                }
+            }, (err) => {
+                console.log('fetchCartData fail', err)
+            })
         }
-        // calculate price
-        newTotalList = newTotalList.map((setItem) => {
-            const setPrice = calculatePrice(setItem.cartItemList || [])
-            return {
-                setPrice,
-                ...setItem
-            }
-        })
-        this.setState({
-            cartTotalList: newTotalList
-        })
     }
 
     private navigateToPage(pageName: string, params) {
@@ -176,7 +173,7 @@ export default class CartPage extends React.Component<IProps, IState> {
 
     private renderCartList() {
         const { cartTotalList } = this.state
-        if (cartTotalList) {
+        if (cartTotalList && cartTotalList.length > 0) {
             const cartListView = cartTotalList.map((cartItem, index) => {
                 return (
                     <View key={`cartSet-${index}`}>
@@ -190,7 +187,11 @@ export default class CartPage extends React.Component<IProps, IState> {
                 </ScrollView>
             )
         } else {
-            return (<View />)
+            return (
+                <View style={styles.blankWrap}>
+                    <Text style={styles.blankTxt}>啥也没有~</Text>
+                </View>
+            )
         }
     }
 
@@ -285,4 +286,15 @@ const styles = StyleSheet.create({
     btn: {
         color: '#1C7ED7'
     },
+    // blank
+    blankWrap: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 10
+    },
+    blankTxt: {
+        fontSize: 15,
+        color: '#777',
+        textAlign: 'center'
+    }
 })

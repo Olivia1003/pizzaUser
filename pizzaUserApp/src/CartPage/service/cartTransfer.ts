@@ -1,7 +1,7 @@
-export function transferCartTotalData(serverData) {
+export function transferCartTotalData(serverList) {
     let cartTotalList = []
-    if (serverData && serverData.carts) {
-        cartTotalList = serverData.carts.map((cartItem) => {
+    if (serverList) {
+        cartTotalList = serverList.map((cartItem) => {
             let cartItemList = []
             if (cartItem.items) {
                 cartItemList = cartItem.items.map((pItem) => {
