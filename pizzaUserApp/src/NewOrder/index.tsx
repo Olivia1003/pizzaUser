@@ -92,6 +92,7 @@ export default class NewOrder extends React.Component<IProps, IState> {
                 price: totalPrice
             }
             console.log('commitPay reqParams', reqParams)
+            console.log('commitPay reqParams', JSON.stringify(reqParams))
             serverIns.post('/order/addOrder', reqParams).then(
                 (res) => {
                     if (res && res.data && res.data.status && Number(res.data.status) === 200) {

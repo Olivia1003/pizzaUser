@@ -13,12 +13,10 @@ import {
 import TopHeader from '../common/component/TopHeader'
 import { orderMock } from '../common/mock/orderMock'
 import { Button, Icon } from 'react-native-elements'
+import { NavigationEvents } from 'react-navigation';
 
 import MapModal from "./components/MapModal";
 import {serverIns} from "../common/utils/serverRequest";
-import {transferUser} from "../common/userTransfer";
-import {setGlobal} from "../common/Global";
-import {showToast} from "../common/utils/Toast";
 
 const MOCK = false;
 
@@ -42,7 +40,8 @@ export default class OrderPage extends React.Component<IProps, IState> {
         this.hideMapModal = this.hideMapModal.bind(this)
     }
 
-    componentDidMount(): void {
+    private fetchOrder() {
+        console.log('fetchOrder');
         serverIns.get(`/order/getOrdersById`).then((res) => {
             let orderList = res.data.model
             this.setState({orderList})
@@ -74,6 +73,10 @@ export default class OrderPage extends React.Component<IProps, IState> {
         position = position || {}
         return (
             <View style={styles.orderPage}>
+
+                <NavigationEvents
+                    onDidFocus={()=>{this.fetchOrder()}}
+                />
                 <TopHeader title={'我的订单'} />
                 <ScrollView>
                     {this.renderOrderList()}
