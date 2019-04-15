@@ -15,12 +15,14 @@ import {
 import TopHeader from '../common/component/TopHeader'
 import { cartMock } from "../common/mock/cartMock"
 import { Button, Icon } from "react-native-elements"
+import { NavigationEvents } from 'react-navigation';
 
 // map
 import { WebView } from 'react-native-webview'
 
 // server
 import { transferCartTotalData } from './service/cartTransfer'
+import { serverIns } from '../common/utils/serverRequest'
 
 // interface
 import { cartSetItemType } from '../common/dataModal/cart'
@@ -49,12 +51,23 @@ export default class CartPage extends React.Component<IProps, IState> {
         };
     }
 
-    public componentDidMount() {
-        this.fetchCartData()
-    }
+    // public componentDidMount() {
+    //     this.fetchCartData()
+    // }
 
     private fetchCartData() {
-        let newTotalList = MOCK ? transferCartTotalData(cartMock).cartTotalList : []
+        let newTotalList = []
+        if (MOCK) {
+            newTotalList = transferCartTotalData(cartMock).cartTotalList
+
+        } else {
+            newTotalList = []
+            // serverIns.post('/cart/showAllCart').then((res) => {
+            //     console.log('fetchCartData success', res)
+            // }, (err) => {
+            //     console.log('fetchCartData fail', err)
+            // })
+        }
         // calculate price
         newTotalList = newTotalList.map((setItem) => {
             const setPrice = calculatePrice(setItem.cartItemList || [])
@@ -75,15 +88,23 @@ export default class CartPage extends React.Component<IProps, IState> {
         }
     }
 
-    private submitCartOrder() {
+    private submitCartOrder(shopCartItem: cartSetItemType) {
         const userId = getGlobal('userId')
-        console.log('submitCartOrder', userId)
+        // const { cartTotalList } = this.state
+        // const shopCartItem = cartTotalList[0]
+        const itemList = shopCartItem.cartItemList.filter((cItem: MenuItemDataType) => {
+            return cItem.selectCount > 0
+        })
         const orderParams = {
-            itemList: []
+            itemList,
+            totalPrice: shopCartItem.setPrice,
+            shopData: {
+                shopId: shopCartItem.shopId || 0,
+                shopName: shopCartItem.shopName || '',
+                shopPos: shopCartItem.shopPos || ''
+            }
         }
-        console.log('新增订单', orderParams)
         this.navigateToPage('NewOrder', orderParams)
-
     }
 
     // 购物车中一项
@@ -138,7 +159,7 @@ export default class CartPage extends React.Component<IProps, IState> {
                         <View style={styles.bottomContent}>
                             <Text style={styles.itemTotalPriceText}>小计 ¥{setItemList.setPrice}</Text>
                             <Button
-                                onPress={() => { this.submitCartOrder() }}
+                                onPress={() => { this.submitCartOrder(setItemList) }}
                                 title="结算"
                                 buttonStyle={[styles.btnBase]}
                                 titleStyle={[styles.btnTitleBase]}
@@ -176,21 +197,11 @@ export default class CartPage extends React.Component<IProps, IState> {
     render() {
         return (
             <View style={styles.container}>
+                <NavigationEvents
+                    onDidFocus={() => { this.fetchCartData() }}
+                />
                 <TopHeader title={'购物车'} />
                 {this.renderCartList()}
-
-
-                {/* <View style={{
-                    width: '100%',
-                    height: 500,
-                    backgroundColor: '#ccc'
-                }}>
-                    <WebView
-                        source={{ uri: 'https://lbs.amap.com/api/javascript-api/example/riding-route/plan-route-according-to-lnglat' }}
-                        style={{ marginTop: 20 }}
-                    />
-                </View> */}
-
             </View>
         )
     }

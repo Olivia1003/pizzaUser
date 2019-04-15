@@ -143,7 +143,9 @@ export default class CartModal extends React.Component<IProps, IState> {
         const userId = getGlobal('userId')
         const { navigateToNewOrder, cartSetData } = this.props
         const { totalPrice } = this.state
-        const itemList = JSON.parse(JSON.stringify(cartSetData.cartItemList))
+        const itemList = cartSetData.cartItemList.filter((cItem: MenuItemDataType) => {
+            return cItem.selectCount > 0
+        })
         if (itemList.length <= 0) {
             showToast('购物车为空，无法下单')
             this.props.hideModalHandle()

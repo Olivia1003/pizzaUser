@@ -13,6 +13,7 @@ import {
 import TopHeader from '../common/component/TopHeader'
 import { cartMock } from "../common/mock/cartMock"
 import { Button, Icon } from "react-native-elements"
+import { NavigationEvents } from 'react-navigation';
 
 // service
 import { userMock } from '../common/mock/userMock'
@@ -23,6 +24,7 @@ import { MenuItemDataType } from '../common/dataModal/menuItem'
 
 // Global
 import { getGlobal } from '../common/Global'
+import { showToast } from '../common/utils/Toast';
 
 const MOCK = true;
 interface IProps {
@@ -49,15 +51,29 @@ export default class NewOrder extends React.Component<IProps, IState> {
         };
     }
 
-    componentDidMount() {
-        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params) {
+    // componentDidMount() {
+
+    // }
+
+    private initPage() {
+        const userData = getGlobal('user')
+        console.log('initPage NewOrder 0')
+        if (this.props.navigation && this.props.navigation.state && this.props.navigation.state.params
+            && userData && userData.address) {
+            console.log('initPage NewOrder 1')
             const { params } = this.props.navigation.state
-            console.log('NewOrder componentDidMount', params)
             this.setState({
                 cartList: params.itemList || [],
                 totalPrice: params.totalPrice || 0,
                 shopData: params.shopData || {},
             })
+        } else {
+            showToast('请填写地址')
+            setTimeout(() => {
+                // this.navigateToPage('MyPage')
+                this.props.navigation.popToTop()
+                // this.props.navigation.replace('MyPage')
+            }, 500);
         }
     }
 
@@ -218,6 +234,9 @@ export default class NewOrder extends React.Component<IProps, IState> {
     render() {
         return (
             <View style={styles.container}>
+                <NavigationEvents
+                    onWillFocus={() => { this.initPage() }}
+                />
                 {this.renderShopAddress()}
                 {this.renderOrderList()}
                 {this.renderUserInfo()}

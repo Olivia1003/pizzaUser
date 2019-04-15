@@ -30,8 +30,6 @@ export default class PayOver extends React.Component<IProps, IState> {
         };
     }
 
-    comp
-
     private pressBackHandle() {
         console.log('支付成功，返回')
         this.props.navigation.popToTop()

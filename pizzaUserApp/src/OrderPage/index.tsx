@@ -16,7 +16,7 @@ import { Button, Icon } from 'react-native-elements'
 import { NavigationEvents } from 'react-navigation';
 
 import MapModal from "./components/MapModal";
-import {serverIns} from "../common/utils/serverRequest";
+import { serverIns } from "../common/utils/serverRequest";
 
 const MOCK = false;
 
@@ -41,10 +41,9 @@ export default class OrderPage extends React.Component<IProps, IState> {
     }
 
     private fetchOrder() {
-        console.log('fetchOrder');
         serverIns.get(`/order/getOrdersById`).then((res) => {
             let orderList = res.data.model
-            this.setState({orderList})
+            this.setState({ orderList })
         })
     }
 
@@ -64,12 +63,12 @@ export default class OrderPage extends React.Component<IProps, IState> {
         position.fromY = order.shop.posY
         position.toX = order.toPosX
         position.toY = order.toPosY
-        this.setState({position})
+        this.setState({ position })
         this.showMapModal()
     }
 
     render() {
-        let {position} = this.state;
+        let { position } = this.state;
         position = position || {}
         return (
             <View style={styles.orderPage}>
@@ -170,7 +169,7 @@ export default class OrderPage extends React.Component<IProps, IState> {
 
     // 地址modal
     private renderMapModal(position) {
-        const { isShowMapModal} = this.state
+        const { isShowMapModal } = this.state
         return (
             <MapModal position={position} isShow={isShowMapModal} hideModalHandle={this.hideMapModal} />
         )
