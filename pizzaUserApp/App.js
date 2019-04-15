@@ -108,7 +108,8 @@ const stackNavigator = createStackNavigator({
   Login: {
     screen: Login,
     navigationOptions: () => ({
-      title: '登录'
+      title: '登录',
+      header: null
     }),
   },
   Register: {

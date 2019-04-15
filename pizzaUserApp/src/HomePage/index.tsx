@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import axios from 'axios'
 import { showToast } from '../common/utils/Toast'
+import { NavigationEvents } from 'react-navigation';
 
 // component
 import { Icon, Button } from 'react-native-elements'
@@ -37,7 +38,7 @@ import { serverIns } from '../common/utils/serverRequest'
 // interface
 import { MenuItemDataType } from '../common/dataModal/menuItem'
 import { cartSetItemType } from '../common/dataModal/cart'
-import { setGlobal } from "../common/Global";
+import { setGlobal, getGlobal } from "../common/Global";
 import { transferUser } from "../common/userTransfer";
 interface IProps {
     // data: any;
@@ -104,27 +105,21 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
     }
 
-    public componentDidMount() {
+    private initPage() {
         this.checkLogin()
-        this.fetchShopList()
-        // this.fetchMenuListData()
-        // this.fetchCartData()
     }
 
     // 服务：登录
     private checkLogin() {
-        serverIns.post('/user/login', {
-            nickName: "Young",
-            password: "123"
-        }).then((res) => {
-            console.log('checkLogin success', res)
-            setGlobal('user', transferUser(res.data.model))
-            console.log('transferUser(res.data)', transferUser(res.data.model));
-            showToast('登录成功')
-        }, (err) => {
-            console.log('checkLogin fail', err)
-            showToast('登录失败')
-        })
+        const user = getGlobal('user')
+        if (user && user.userId) {
+            this.fetchShopList()
+        } else {
+            showToast('请先登录')
+            setTimeout(() => {
+                this.navigateToPage('Login')
+            }, 1000);
+        }
     }
 
     private fetchShopList() {
@@ -148,9 +143,16 @@ export default class MenuPage extends React.Component<IProps, IState> {
                                 posString: sItem.posString
                             }
                         })
+                        const selectShop = getGlobal('selectShop')
+                        let newSelectShop = shopList[0]
+                        if (selectShop && selectShop.shopId) {
+                            newSelectShop = selectShop
+                        } else {
+                            setGlobal('selectShop', shopList[0])
+                        }
                         this.setState({
                             shopList,
-                            selectShop: shopList[0] || {}
+                            selectShop: newSelectShop || {}
                         }, () => {
                             this.fetchMenuListData()
                             this.fetchCartData()
@@ -178,13 +180,20 @@ export default class MenuPage extends React.Component<IProps, IState> {
             }).then(
                 (res) => {
                     console.log('fetchMenuListData success', res, res.data.model.items)
-                    if (res && res.data && res.data.model && res.data.model.items) {
+                    if (res && res.data && res.data.model) {
                         this.setState({
                             menuList: transferMenuData(res.data.model.items)
+                        })
+                    } else {
+                        this.setState({
+                            menuList: []
                         })
                     }
                 }, (err) => {
                     console.log('fetchMenuListData error', err)
+                    this.setState({
+                        menuList: []
+                    })
                 })
         }
     }
@@ -233,13 +242,20 @@ export default class MenuPage extends React.Component<IProps, IState> {
             serverIns.get(`/cart/showCart?shopId=${shopId}`)
                 .then((res) => {
                     console.log('fetchCartData success', res)
-                    if (res && res.data && res.data.model) {
+                    if (res && res.data) {
                         this.setState({
                             cartItemList: transferCartData(res.data.model).cartItemList,
+                        })
+                    } else {
+                        this.setState({
+                            cartItemList: []
                         })
                     }
                 }, (err) => {
                     console.log('fetchCartData fail', err)
+                    this.setState({
+                        cartItemList: []
+                    })
                 })
         }
     }
@@ -352,6 +368,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
         console.log('selectShopHandle', shopItem)
         if (shopItem) {
             const newShop = JSON.parse(JSON.stringify(shopItem))
+            setGlobal('selectShop', newShop)
             this.setState({
                 selectShop: newShop
             }, () => {
@@ -485,7 +502,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                     />
                 </TouchableOpacity>
                 {/* 销量 */}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.priceSortBtn}
                     activeOpacity={0.7}
                 >
@@ -496,7 +513,7 @@ export default class MenuPage extends React.Component<IProps, IState> {
                         name={saleIconName}
                         color='#97CAE5'
                     />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 {/* 刷新 */}
                 {this.renderFreshBtn()}
             </View>
@@ -624,6 +641,9 @@ export default class MenuPage extends React.Component<IProps, IState> {
 
         return (
             <View style={styles.container}>
+                <NavigationEvents
+                    onDidFocus={() => { this.initPage() }}
+                />
                 <TopHeader title={'首页'} />
                 {this.renderSwiper()}
                 {this.renderShopBar()}
