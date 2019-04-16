@@ -97,6 +97,10 @@ export default class NewOrder extends React.Component<IProps, IState> {
                     count: cItem.selectCount
                 }
             })
+            let addressString = (userData.address.addressStr || '')
+                + ' ' + (userData.address.addressStr2 || '')
+                + ' ' + (userData.address.name || '')
+                + ' ' + (userData.address.phone || '');
             const reqParams = {
                 userId: userData.userId,
                 items: itemList,
@@ -105,7 +109,8 @@ export default class NewOrder extends React.Component<IProps, IState> {
                 },
                 toPosX: userData.address.posX || '50.10',
                 toPosY: userData.address.posY || '5.1',
-                price: totalPrice
+                price: totalPrice,
+                toPosString: addressString
             }
             console.log('commitPay reqParams', reqParams)
             console.log('commitPay reqParams', JSON.stringify(reqParams))

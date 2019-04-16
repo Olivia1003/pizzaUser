@@ -130,7 +130,7 @@ export default class MenuPage extends React.Component<IProps> {
                             <Text style={styles.userName}>{user.nickName}</Text>
                         </View>
                         <View style={styles.textarea}>
-                            <Text style={styles.userName}>余额: {user.money}</Text>
+                            <Text style={styles.money}>余额: ￥{user.money}</Text>
                         </View>
                     </View>
                     <View style={styles.address}>
@@ -197,10 +197,11 @@ const styles = StyleSheet.create({
     header:{
         backgroundColor: '#00aced',
         padding: 20,
+        paddingTop: 40,
         flexDirection: 'row'
     },
     textarea:{
-        margin: 10,
+        margin: 5,
         marginLeft: 60,
     },
     userName:{
@@ -224,6 +225,9 @@ const styles = StyleSheet.create({
     },
     btn:{
         padding: 20
+    },
+    money:{
+        fontSize: 18,
+        color: '#ff4939'
     }
-
 });

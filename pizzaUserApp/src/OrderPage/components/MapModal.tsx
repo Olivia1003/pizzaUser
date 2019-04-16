@@ -25,6 +25,8 @@ interface IProps {
     isShow: boolean
     hideModalHandle: any
     position: any
+    addressFrom: any
+    addressTo: any
 }
 
 interface IState {
@@ -54,8 +56,10 @@ export default class MapModal extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const { isShow, hideModalHandle ,position} = this.props
+        const { isShow, hideModalHandle ,position, addressFrom, addressTo} = this.props
         const { fromX, fromY, toX, toY} = position
+        console.log(addressFrom)
+        console.log(addressTo)
         return (
             <Overlay
                 isVisible={isShow}
@@ -67,6 +71,15 @@ export default class MapModal extends React.Component<IProps, IState> {
                     source={{ uri: `http://localhost:8021/?fromX=${fromX}&fromY=${fromY}&toX=${toX}&toY=${toY}` }}
                     style={{ marginTop: 20 }}
                 />
+                <View style={styles.address}>
+                    <View style={styles.left}>
+                        <Text style={styles.addressTxt}>{addressFrom}</Text>
+                    </View>
+                    <View style={styles.right}>
+                        <Text style={styles.addressTxt}>{addressTo}</Text>
+                    </View>
+                </View>
+
             </Overlay>
         )
     }
@@ -83,34 +96,20 @@ const shadow = {
 }
 
 const styles = StyleSheet.create({
-    shopModal: {
-        paddingVertical: 10,
-        paddingHorizontal: 5,
-        // backgroundColor: '#eee'
-    },
-    shopItem: {
-        paddingVertical: 5,
-        paddingHorizontal: 5,
-        marginBottom: 10,
-        backgroundColor: '#fff',
-        ...shadow
-    },
-    shopItemFirst: {
+    address: {
+        height: SCREEN_WIDTH/3.5
+        ,
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
+        justifyContent: 'space-between'
     },
-    shopItemSecond: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 18,
+    left: {
+        width: '40%'
     },
-    shopNameTxt: {
-        fontSize: 15,
-        color: '#333'
+    right: {
+        width: '40%'
     },
-    shopPosTxt: {
-        fontSize: 13,
-        color: '#777'
-    }
+    addressTxt: {
+
+    },
+
 });
