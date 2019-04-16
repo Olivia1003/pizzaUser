@@ -2,6 +2,9 @@
 // 首页菜单
 export function transferMenuData(serverData) {
     console.log('transferMenuData input', serverData)
+    if (!serverData) {
+        return []
+    }
     const menuList = serverData.map((mItem) => {
         if (!mItem || !mItem.item) {
             return

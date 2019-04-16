@@ -8,38 +8,37 @@ import {
 import { SearchBar, Icon, Button } from 'react-native-elements';
 
 interface IProps {
-    // data: any;
-    // navigation: any;
+    searchValue: string
+    onCommitSearch: any
+    onUpdateSearch: any
 }
 
 interface IState {
-    searchValue: string
 }
 export default class MySearchBar extends React.Component<IProps, IState> {
     constructor(props) {
         super(props)
         this.state = {
-            searchValue: ''
+
         }
         this.updateSearch = this.updateSearch.bind(this)
         this.commitSearch = this.commitSearch.bind(this)
     }
 
     private updateSearch(value) {
-        // console.log('updateSearch', value)
-        this.setState({
-            searchValue: value
-        })
+        if (typeof this.props.onCommitSearch === 'function') {
+            this.props.onUpdateSearch(value)
+        }
     }
 
     private commitSearch() {
-        const { searchValue } = this.state
-        console.log('commitSearch', searchValue)
-
+        if (typeof this.props.onCommitSearch === 'function') {
+            this.props.onCommitSearch()
+        }
     }
 
     public render() {
-        const { searchValue } = this.state
+        const { searchValue } = this.props
         const searchIcon = (
             <Icon
                 name='search'
