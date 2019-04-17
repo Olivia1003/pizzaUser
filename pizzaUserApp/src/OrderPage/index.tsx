@@ -144,15 +144,27 @@ export default class OrderPage extends React.Component<IProps, IState> {
             const pressCallback = () => {
                 this.cancelOrder(order)
             };
+            const pressCallbackCheck = () => {
+                this.checkOrder(order)
+            };
             return (
-                <View>
-                    <Button onPress={pressCallback}
-                            title="取消订单"
-                            buttonStyle={[styles.btnBase]}
-                            titleStyle={[styles.btnTitleBase]}
-                            raised={true}>
+                <View style={styles.btnGroup}>
+                    <View style={styles.b}>
+                        <Button onPress={pressCallback}
+                                title="取消订单"
+                                buttonStyle={[styles.btnBase]}
+                                titleStyle={[styles.btnTitleBase]}
+                                raised={true}>
 
-                    </Button>
+                        </Button>
+                    </View>
+                    <View>
+                        <Button onPress={pressCallbackCheck}
+                                title="查看详情"
+                                buttonStyle={[styles.btnBase]}
+                                titleStyle={[styles.btnTitleBase]}
+                                raised={true}></Button>
+                    </View>
                 </View>
             )
         } else {
@@ -291,5 +303,8 @@ const styles = StyleSheet.create({
     btnGroup: {
         flexDirection: 'row',
         justifyContent: 'space-between'
+    },
+    b:{
+        marginRight: 3
     }
 });

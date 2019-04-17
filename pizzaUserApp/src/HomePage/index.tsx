@@ -594,6 +594,10 @@ export default class MenuPage extends React.Component<IProps, IState> {
         if (menuList && menuList.length > 0) {
             menuListView = menuList.map((mItem: MenuItemDataType, index) => {
                 const addCountHandle = () => {
+                    if (mItem.stock <= 0){
+                        showToast('库存不足');
+                        return;
+                    }
                     if (cartItemList) {
                         let foundItem = false
                         cartItemList.forEach((cItem: MenuItemDataType) => {

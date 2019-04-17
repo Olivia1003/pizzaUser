@@ -15,12 +15,14 @@ import TopHeader from '../common/component/TopHeader'
 import {Avatar, Button, Input} from 'react-native-elements'
 import {userMock} from '../common/mock/userMock'
 import add = Animated.add;
+import { NavigationEvents } from 'react-navigation';
 
 // gloabl
 import {getGlobal,setGlobal} from "../common/Global";
 import {serverIns} from "../common/utils/serverRequest";
 import {showToast} from "../common/utils/Toast";
 import {transferUser} from "../common/userTransfer";
+import {NavigationEvents} from "react-navigation";
 
 const MOCK = false;
 
@@ -46,15 +48,18 @@ export default class MenuPage extends React.Component<IProps> {
         this.navigateToPage = this.navigateToPage.bind(this)
     }
 
-    componentDidMount(): void {
+    private initPage(): void {
         let user = getGlobal('user');
-        let addressOld = user.address || {}
-
-        let address = JSON.parse(JSON.stringify(addressOld));
-        this.state = {
-            user: MOCK ? userMock.user : user,
-            address: address
-        }
+        serverIns.get(`/user/${user.userId}`).then((res) => {
+            let user = transferUser(res.data);
+            setGlobal('user',user)
+            this.setState({user})
+            let addressOld = user.address || {}
+            let address = JSON.parse(JSON.stringify(addressOld));
+            this.setState({address})
+        }, (err) => {
+            console.log('err',err)
+        })
     }
 
     private navigateToPage(pageName) {
@@ -115,6 +120,9 @@ export default class MenuPage extends React.Component<IProps> {
         let { address, user } = this.state
         return (
             <View>
+                <NavigationEvents
+                    onDidFocus={() => { this.initPage() }}
+                />
                 <TopHeader title={'我的'} />
                 <View style={styles.container}>
                     <View style={styles.header}>
@@ -205,7 +213,8 @@ const styles = StyleSheet.create({
         marginLeft: 60,
     },
     userName:{
-        fontSize: 20
+        fontSize: 20,
+        color: '#ffffff'
     },
     address:{
         flexDirection: 'column',
@@ -228,6 +237,7 @@ const styles = StyleSheet.create({
     },
     money:{
         fontSize: 18,
-        color: '#ff4939'
+        color: '#ffffff',
+        marginRight: 20
     }
 });
